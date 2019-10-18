@@ -4,7 +4,6 @@ import json
 from pathlib import Path
 from multiprocessing import Manager
 
-#定义写json函数
 def writeJson(pwd, data):
     try:
         with Path(pwd).open(mode ='w') as f:
