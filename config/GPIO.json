@@ -1,0 +1,10 @@
+{
+    "ledWhitePin": 16,
+    "ledYellowPin": 20,
+    "ledRedPin": 21,
+    "lightSensorPin": 26,
+    "fireSensorPin": 19,
+    "pirSensorPin": 17,
+    "pirSensorEPin": 23,
+    "buzPin": 12
+}
