@@ -50,7 +50,7 @@ class sensor:
     #     else:
     #         return str(self.getData())
 
-def creatDataSendServer(dict, event, port = 16868, host = ''):
+def creatDataSendServer(dict, event, port = 16868, host = '127.0.0.1'):
     event.wait()
     sensorList = ['hcho', 'temp', 'humi', 'tvoc', 'eco2']
     ser = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -59,13 +59,17 @@ def creatDataSendServer(dict, event, port = 16868, host = ''):
     try:
         ser.bind((host, port))
     except:
-        print('SendSer start error, the port may be occupied.')
+        print('SendSer start error, the port may be occupied')
         sys.exit(2)
+        return False
 
     print("SendSer started on port ", port, ", listen on ", host)
     ser.listen(5)
     while True: 
-        clientSocket,addr = ser.accept()
+        try:
+            clientSocket,addr = ser.accept()
+        except:
+            return False
         print("addr: %s" % str(addr))
         data = clientSocket.recv(1024)
         try:
@@ -113,17 +117,21 @@ def getSensorData(dict, event, dev = '/dev/ttyUSB0'):
                         humi = sensor('Humidity', 0, dhtHumiLowNum, '%', 1)
                         tvoc = sensor('TVOC', tvocHightNum, tvocLowNum, 'PPb')
                         eco2 = sensor('eCO2', eco2HightNum, eco2LowNum, 'PPm')
-
-                        dict['hcho'] = hcho.getData()
-                        dict['hchoUnit'] = hcho.getUnit()
-                        dict['temp'] = temp.getData()
-                        dict['tempUnit'] = temp.getUnit()
-                        dict['humi'] = humi.getData()
-                        dict['humiUnit'] = humi.getUnit()
-                        dict['tvoc'] = tvoc.getData()
-                        dict['tvocUnit'] = tvoc.getUnit()
-                        dict['eco2'] = eco2.getData()
-                        dict['eco2Unit'] = eco2.getUnit()
+                        try:
+                            dict['hcho'] = hcho.getData()
+                            dict['hchoUnit'] = hcho.getUnit()
+                            dict['temp'] = temp.getData()
+                            dict['tempUnit'] = temp.getUnit()
+                            dict['humi'] = humi.getData()
+                            dict['humiUnit'] = humi.getUnit()
+                            dict['tvoc'] = tvoc.getData()
+                            dict['tvocUnit'] = tvoc.getUnit()
+                            dict['eco2'] = eco2.getData()
+                            dict['eco2Unit'] = eco2.getUnit()
+                        except:
+                            print('Set sensor data error')
+                            sys.exit(2)
+                            return False
 
                         event.set()
 

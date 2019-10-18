@@ -25,13 +25,13 @@ def initConfig(defaultGlobalConfig, configNameList, configDir = './config/'):
             # print('Config directory exists.')
             pass
         else:
-            print('Config directory doesn\'t exist, try to create it.')
+            print('Config directory doesn\'t exist, try to create it')
             try:
                 dir.mkdir()
             except:
-                print('Config directory creation failed.')
+                print('Config directory creation failed')
             else:
-                print('Config directory created successfully.')
+                print('Config directory created successfully')
                 flag = 1
     for configName in configNameList:
         configFilePath = configDir + configName + '.json'
@@ -73,7 +73,7 @@ def savaConfig(defaultGlobalConfig, configManager, configNameList, configDir = '
                     dict[key] = configManager[key]
                 writeJson(configFilePath, dict)
         except:
-            print('Save config error.')
+            print('Save config error')
         finally:
             dict.clear()
 
