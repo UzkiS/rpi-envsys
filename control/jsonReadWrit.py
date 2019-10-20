@@ -40,7 +40,7 @@ def initConfig(defaultGlobalConfig, configNameList, configDir = './config/'):
             print('Found config : ' + configFilePath)
             flag = 1
         else:
-            print('Can\'t find config : ' + configFilePath + ', create it.')
+            print('Can\'t find config : ' + configFilePath + ', create it')
             try:
                 if writeJson(configFilePath,configFileData):
                     print('Create ' + configName + '.json success')

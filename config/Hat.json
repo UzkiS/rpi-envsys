@@ -1,4 +1,4 @@
 {
-    "devName": "/dev/ttyUSB0",
+    "serialDeviceName": "/dev/ttyUSB0",
     "sendSerPort": "16868"
 }

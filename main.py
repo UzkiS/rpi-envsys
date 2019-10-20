@@ -19,19 +19,24 @@ defaultGlobalConfig = {
         'buzPin' : 12
     },
     'Hat' : {
-        'devName' : '/dev/ttyUSB0',
+        'serialDeviceName' : '/dev/ttyUSB0',
         'sendSerPort' : '16868'
     }
 }
 
 GPIO.setmode(GPIO.BCM)
+
 CommonConfigDir = './config/'
 configNameList = ['GPIO', 'Hat']
 
-configManager = Manager().dict()
 
+configManager = Manager().dict()
 sensorDataList = Manager().dict()
+
 hatEvent = Event()
+offEvent = Event()
+
+
 
 def main():
     # GPIO.setup(gpio_light_sensor, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
@@ -40,18 +45,26 @@ def main():
     # GPIO.add_event_detect(gpio_light_sensor, GPIO.BOTH, callback=a, bouncetime=200)
     # GPIO.add_event_callback()
     # GPIO.cleanup()
+
+    # Load config
     if control.initConfig(defaultGlobalConfig , configNameList) & control.loadConfig(configManager ,configNameList):
         pass
     else:
         sys.exit(2)
     
+    # Setup GPIO status
+    chanOutHighList = []
+    chanOutLowList = [int(configManager['buzPin']),int(configManager['ledWhitePin'])]
+    GPIO.setup(chanOutLowList, GPIO.OUT, initial=GPIO.LOW)
+
+    chanInList = []
+    GPIO.setup(chanInList, GPIO.IN)
 
 
 
-    control.savaConfig(defaultGlobalConfig, configManager, configNameList)
 
 
-    dataGetProcess = Process(target = control.getSensorData, args = (sensorDataList, hatEvent, ))
+    dataGetProcess = Process(target = control.getSensorData, args = (sensorDataList, hatEvent, configManager['serialDeviceName']))
     dataSendSerProcess = Process(target = control.creatDataSendServer, args = (sensorDataList, hatEvent, int(configManager['sendSerPort']),))
     dataGetProcess.start()
     dataSendSerProcess.start()
@@ -64,8 +77,8 @@ if __name__ == "__main__":
     try:
         main()
     except:
+        pass
+    finally:
+        GPIO.cleanup()
+        control.savaConfig(defaultGlobalConfig, configManager, configNameList)
         print('Programm exit')
-
-
-    
-    
