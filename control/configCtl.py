@@ -60,9 +60,7 @@ def initConfig(defaultGlobalConfig, configNameList, configDir = './config/'):
         print(' ')
         return False
 
-
-
-def savaConfig(defaultGlobalConfig, configManager, configNameList, configDir = './config/'):
+def saveConfig(defaultGlobalConfig, configManager, configNameList, configDir = './config/'):
     for configName in configNameList:
         dict = {}
         configFilePath = configDir + configName + '.json'
@@ -76,8 +74,13 @@ def savaConfig(defaultGlobalConfig, configManager, configNameList, configDir = '
         finally:
             dict.clear()
 
-
-
+def wattingSaveConfig(defaultGlobalConfig, configManager, configNameList, event, configDir = './config/'):
+    print('Start config save server')
+    while True:
+        event.wait()
+        saveConfig(defaultGlobalConfig, configManager, configNameList, configDir)
+        print('Config saved successfully')
+        event.clear()
 
 def loadConfig(configManager, configNameList, configDir = './config/'):
     flag = 0

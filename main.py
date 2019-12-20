@@ -34,6 +34,7 @@ configManager = Manager().dict()
 sensorDataList = Manager().dict()
 
 hatEvent = Event()
+saveConfigEvent = Event()
 offEvent = Event()
 
 
@@ -66,10 +67,15 @@ def main():
 
     dataGetProcess = Process(target = control.getSensorData, args = (sensorDataList, hatEvent, configManager['serialDeviceName']))
     dataSendSerProcess = Process(target = control.creatDataSendServer, args = (sensorDataList, hatEvent, int(configManager['sendSerPort']),))
+    configSaveProcess = Process(target = control.wattingSaveConfig, args = (defaultGlobalConfig, configManager, configNameList, saveConfigEvent))
+    
     dataGetProcess.start()
     dataSendSerProcess.start()
+    configSaveProcess.start()
 
+    
     dataSendSerProcess.join()
+
     
 
 
@@ -77,8 +83,9 @@ if __name__ == "__main__":
     try:
         main()
     except:
+        # print('Some error')
         pass
     finally:
         GPIO.cleanup()
-        control.savaConfig(defaultGlobalConfig, configManager, configNameList)
+        control.saveConfig(defaultGlobalConfig, configManager, configNameList)
         print('Programm exit')
