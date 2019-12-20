@@ -1,0 +1,251 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>管理控制中心</title>
+    <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.3.1/css/bootstrap.min.css">
+    <script src="https://cdn.staticfile.org/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdn.staticfile.org/popper.js/1.15.0/umd/popper.min.js"></script>
+    <script src="https://cdn.staticfile.org/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <script src="https://cdn.staticfile.org/axios/0.19.0-beta.1/axios.min.js"></script>
+    <link rel="stylesheet" href="/css/main.css">
+</head>
+<body>
+
+<header>
+    <nav class="navbar navbar-expand-md navbar-dark fixed-top">
+        <!-- Brand -->
+        <a class="navbar-brand" href="#">管理控制中心</a>
+        
+        <!-- Toggler/collapsibe Button -->
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navMain">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div id="navMain" class="collapse navbar-collapse">
+            <ul class="navbar-nav ml-auto text-center">
+                <li class="nav-item bg-dark"><a class="nav-link" href="#">状态概览</a></li>
+                <li class="nav-item"><a class="nav-link" href="#">情景设置</a></li>
+                <li class="nav-item"><a class="nav-link" href="#">系统设置</a></li>
+                <li class="nav-item"><a class="nav-link" href="#">设备管理</a></li>
+                </ul>
+        </div>
+        <!-- <ul id="navScen">
+
+        </ul> -->
+    </nav>
+    <div id="navFake"></div>
+</header>
+
+<div class="container">
+    <!-- 状态概览 -->
+    <section id="pageOverview">
+        <div class="row d-flex justify-content-center">
+            <div id="clock" class="col-sm-12 col-md-12 col-lg-5 text-center" v-cloak>
+                <p id="clockTime">{{ time }}</p>
+                <div>
+                    <p class="date">{{ date }}</p>
+                    <p class="week">{{ week }}</p>
+                </div>
+            </div>
+            <div id="statusTips" class="col-sm-12 col-md col-lg-5 bg-dark ml-4 mr-4 p-auto">
+                <div class="p-auto bg-light mt-auto mb-auto">
+                        <p class="p-auto">当前状态{{ sysStatus }}</p>
+                </div>
+
+            </div>
+        </div>
+        <div class="row d-flex justify-content-center">
+            <div class="row mt-5 col-11">
+                <div class="col-sm-6 col-lg-3 col-xl-12">
+                    <div class="mt-3 ml-1 mr-1 p-3 bg-dark rounded-lg">
+                        <h3>温度</h3>
+                        <p class="m-0">{{ temp }}度</p>
+                    </div>
+                </div>
+                <div class="col-sm-6 col-lg-3 col-xl-12">
+                    <div class="mt-3 ml-1 mr-1 p-3 bg-dark rounded-lg">
+                        <h3>湿度</h3>
+                        <p class="m-0">{{ humi }}</p>
+                    </div>
+                </div>
+                <div class="col-sm-6 col-lg-3 col-xl-12">
+                    <div class="mt-3 ml-1 mr-1 p-3 bg-dark rounded-lg">
+                        <h3>甲醛浓度</h3>
+                        <p class="m-0">{{ hcho }}ppm</p>
+                    </div>
+                </div>
+                <div class="col-sm-6 col-lg-3 col-xl-12">
+                    <div class="mt-3 ml-1 mr-1 p-3 bg-dark rounded-lg">
+                        <h3>CO2等排量</h3>
+                        <p class="m-0">{{ eco2 }}ppm</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- 情景设置 -->
+    <section id="pageSenceCtl">
+
+    </section>
+    <!-- 系统设置 -->
+    <section id="pageSysSetting"></section>
+    <!-- 设备管理 -->
+    <section id="pageDeviceCtl">
+        
+        <div class="item">
+            <h3>CPU温度</h3>
+            <p>{{ cpuTemp }}</p>
+        </div>
+        <div class="item">
+            <h3>系统运行时间</h3>
+            <p>{{ sysUpTime }}</p>
+        </div>
+        <div class="item">
+            <h3>内存占用</h3>
+            <p>{{ memUsed }}</p>
+        </div>
+        <div id="btnSystemCtl">
+            <div class="btn">关机</div>
+            <div class="btn">重启</div>
+        </div>
+    </section>
+
+
+
+
+
+
+
+
+
+
+
+</div>
+<footer>
+
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script>
+    var clock = new Vue({
+        el: '#clock',
+        data: {
+            time: '00:00:00',
+            date: '2020-01-01',
+            week: '周一'
+        },
+        methods: {
+            zeroPadding: function(num, digit) {
+                var zero = '';
+                for(var i = 0; i < digit; i++) {
+                    zero += '0';
+                }
+                return (zero + num).slice(-digit);
+            },
+            updateTime: function() {
+                var cd = new Date();
+                this.time = this.zeroPadding(cd.getHours(), 2) + ':' + this.zeroPadding(cd.getMinutes(), 2) + ':' + this.zeroPadding(cd.getSeconds(), 2);
+                this.date = this.zeroPadding(cd.getFullYear(), 4) + '-' + this.zeroPadding(cd.getMonth()+1, 2) + '-' + this.zeroPadding(cd.getDate(), 2);
+                this.week = week[cd.getDay()]
+            }
+
+        },
+        mounted () {
+            setInterval(this.updateTime,100);
+        }
+    });
+
+    // var deviceData = new Vue({
+    //     el: '#pageDeviceCtl',
+    //     data: {
+    //         cpuTemp: '',
+    //         sysUpTime: '',
+    //         memUsed: ''
+    //     },
+    //     methods: {
+    //         getData: function(){
+    //             axios
+    //             .post('/t.php', {
+    //                 firstName: 'Fred',        // 参数 firstName
+    //                 lastName: 'Flintstone'    // 参数 lastName
+    //             })
+    //             .then(response => (this.sysUpTime = response.data))
+    //             .catch(function (error) { // 请求失败处理
+    //                 console.log(error);
+    //             });
+    //         }
+    //     }
+    // });
+
+    var deviceData = new Vue({
+        el: '#pageDeviceCtl',
+        data() {
+            return{
+                cpuTemp: '',
+                sysUpTime: '',
+                memUsed: ''
+            }
+        },
+        methods: {
+            getData: function(){
+                axios
+                .post('/t.php')
+                .then(response => {
+                    // this.sysUpTime = response.data.sysUpTime
+                    // // console.log(response)
+                    for(item in deviceData.$data){
+                        deviceData.$data[item] = response.data[item];
+                    }
+                })
+                .catch(function (error) { // 请求失败处理
+                    console.log(error);
+                });
+            }
+        },
+        mounted() {
+            setInterval(this.getData,1000);
+        }
+    });
+
+    var week = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
+    
+
+    // function updateTime() {
+    //     var cd = new Date();
+    //     clock.time = zeroPadding(cd.getHours(), 2) + ':' + zeroPadding(cd.getMinutes(), 2) + ':' + zeroPadding(cd.getSeconds(), 2);
+    //     clock.date = zeroPadding(cd.getFullYear(), 4) + '-' + zeroPadding(cd.getMonth()+1, 2) + '-' + zeroPadding(cd.getDate(), 2);
+    //     clock.week = week[cd.getDay()]
+    // };
+
+    // function zeroPadding(num, digit) {
+    //     var zero = '';
+    //     for(var i = 0; i < digit; i++) {
+    //         zero += '0';
+    //     }
+    //     return (zero + num).slice(-digit);
+    // }
+
+
+    // function getSysStatus() {
+    //     deviceData.cpuTemp=1;
+    //     axios
+    //         .post('/t.php', {
+    //             firstName: 'Fred',        // 参数 firstName
+    //             lastName: 'Flintstone'    // 参数 lastName
+    //         })
+    //         .then(response => (deviceData.sysUpTime = response.data))
+    //         .catch(function (error) { // 请求失败处理
+    //             console.log(error);
+    //         });
+    // };
+    
+    // updateTime();
+    // getSysStatus();
+    // var timerID = setInterval(clock.updateTime, 1000);
+    // var deviceDataID = setInterval(deviceData.getData, 1000);
+</script>
+</body>
+</html>
