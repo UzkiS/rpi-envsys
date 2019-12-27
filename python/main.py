@@ -76,6 +76,9 @@ def main():
     
     dataSendSerProcess.join()
 
+def restart():
+        python = sys.executable
+        os.execl(python, python, * sys.argv)
     
 
 
@@ -83,9 +86,11 @@ if __name__ == "__main__":
     try:
         main()
     except:
-        # print('Some error')
-        pass
+        print('Some error')
+        # saveConfigEvent.set()
+        # pass
     finally:
+        
         GPIO.cleanup()
-        control.saveConfig(defaultGlobalConfig, configManager, configNameList)
+        # control.saveConfig(defaultGlobalConfig, configManager, configNameList)
         print('Programm exit')

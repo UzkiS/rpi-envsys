@@ -6,6 +6,7 @@ import numpy
 import socket
 import json
 import sys
+import copy
 
 errTips = 'Data Error'
 
@@ -71,36 +72,48 @@ def creatDataSendServer(dict, event, port = 16868, host = '127.0.0.1'):
         except:
             return False
         print("addr: %s" % str(addr))
-        data = clientSocket.recv(1024)
-        try:
-            data = json.loads(data.decode('utf-8'))
-            sensorListIndex=data[0]
-            dictIndex=sensorList[int(sensorListIndex)]
-            if data[1] == 1:
-                unitDictIndex = dictIndex + 'Unit'
-                waitSendData = str(dict[dictIndex]) + ' ' + dict[unitDictIndex]
-            else:
-                waitSendData = dict[dictIndex]
-        except:
-            waitSendData = 'Error'
-        
-        msg = str(waitSendData)
-        # msg = 'welcome' + "\r\n"
+        # data = clientSocket.recv(1024)
+        # try:
+        #     data = json.loads(data.decode('utf-8'))
+        #     sensorListIndex=data[0]
+        #     dictIndex=sensorList[int(sensorListIndex)]
+        #     if data[1] == 1:
+        #         unitDictIndex = dictIndex + 'Unit'
+        #         waitSendData = str(dict[dictIndex]) + ' ' + dict[unitDictIndex]
+        #     else:
+        #         waitSendData = dict[dictIndex]
+        # except:
+        #     waitSendData = 'Error'
+        # waitSendData=json.dumps(list())
+        nowDict=copy.deepcopy(dict)
+        # print(json.dumps(nowDict))
+        msg=json.dumps(nowDict)
+        print(nowDict)
+        print(dict)
+
+        # # msg = str(waitSendData)
+        # msg=waitSendData
+        # # msg = 'welcome' + "\r\n"
         clientSocket.send(msg.encode('utf-8'))
         clientSocket.close()
 
 
-def getSensorData(dict, event, dev = '/dev/ttyUSB0'):
+def getSensorData(dict, event, dev = '/dev/ttyS0'):
     with serial.Serial(dev , 9600, timeout=0) as ser:
         try:
             while True:
                 size = ser.in_waiting           # 获得缓冲区字符
+                while size != 12:
+                    # print(size)
+                    time.sleep(1)
+                    size = ser.in_waiting
+                    continue
                 if size != 0:
                     checkSum = 0
                     response = ser.read(size)       # 读取内容并显示
                     for i in range(1,size - 1):
                         checkSum += response[i]
-
+                        print(response)
                     if hex(~numpy.uint32(checkSum)+1)[8] + hex(~numpy.uint32(checkSum)+1)[9] != response.hex()[22] + response.hex()[23]:
                         pass
                     else:
@@ -129,9 +142,10 @@ def getSensorData(dict, event, dev = '/dev/ttyUSB0'):
                             dict['eco2'] = eco2.getData()
                             dict['eco2Unit'] = eco2.getUnit()
                         except:
-                            print('Set sensor data error')
-                            sys.exit(2)
-                            return False
+                            # print('Set sensor data error')
+                            # sys.exit(2)
+                            # return False
+                            pass
 
                         event.set()
 

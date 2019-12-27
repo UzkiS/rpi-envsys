@@ -66,8 +66,11 @@ def saveConfig(defaultGlobalConfig, configManager, configNameList, configDir = '
         configFilePath = configDir + configName + '.json'
         try:
             for key in configManager.keys():
+                print('1s')
                 if key in defaultGlobalConfig[configName]:
                     dict[key] = configManager[key]
+                    print('2s')
+                print('3s')
                 writeJson(configFilePath, dict)
         except:
             print('Save config error')

@@ -33,7 +33,6 @@
                 </ul>
         </div>
         <!-- <ul id="navScen">
-
         </ul> -->
     </nav>
     <div id="navFake"></div>
@@ -121,10 +120,15 @@
     <section id="pageDeviceCtl">
         <div class="d-flex justify-content-center">
             <div class="row mt-5 col-11">
+                <div class="col-xl-12">
+                    <div class="mt-3 ml-1 mr-1 p-3 rounded-lg border border-white bg-dark d-flex justify-content-between">
+                        <p class="mb-auto">IP:{{ ip }}</p>
+                    </div>
+                </div>
                 <div v-for="(data,key) in item" class="col-xl-12">
-                    <div class="mt-3 ml-1 mr-1 p-3 rounded-lg border border-white">
-                        <h3>{{ data.name }}</h3>
-                        <p>{{ data.data }}</p>
+                    <div class="mt-3 ml-1 mr-1 p-3 rounded-lg border border-white d-flex justify-content-between">
+                        <h3 class="mb-auto">{{ data.name }}</h3>
+                        <p class="mt-auto mb-auto">{{ data.data }}</p>
                     </div>
                 </div>
             </div>
@@ -151,7 +155,6 @@
             }
         }
     });
-
     var pageOverviewData = new Vue({
         el: '#pageOverview',
         data: function() {
@@ -215,7 +218,6 @@
                 this.date = this.zeroPadding(cd.getFullYear(), 4) + '-' + this.zeroPadding(cd.getMonth()+1, 2) + '-' + this.zeroPadding(cd.getDate(), 2);
                 this.week = this.weekList[cd.getDay()]
             }
-
         },
         mounted: function() {
             setInterval(this.updateTime,100);
@@ -244,27 +246,41 @@
                         data: ' ',
                         unit: '%'
                     }
-                }
+                },
+                ip: 'NULL'
             }
         },
         methods: {
             getData: function(){
                 axios
-                .post('/t.php')
+                .get('/control/deviceData.php')
                 .then(response => {
-                    // this.sysUpTime = response.data.sysUpTime
-                    // // console.log(response)
                     for(item in deviceData.$data.item){
                         deviceData.$data['item'][item]['data'] = response.data[item];
                     }
                 })
-                .catch(function (error) { // 请求失败处理
+                .catch(function (error) {
+                    console.log(error);
+                });
+            },
+            getIP: function(){
+                axios
+                .get('/control/deviceCtl.php', {
+                    params: {
+                        mode: 'ip'
+                    }
+                })
+                .then(response => {
+                    this.ip=response.data
+                })
+                .catch(function (error) {
                     console.log(error);
                 });
             }
         },
         mounted: function() {
             setInterval(this.getData,1000);
+            setInterval(this.getIP,1000);
         }
     });
     

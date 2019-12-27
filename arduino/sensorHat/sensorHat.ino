@@ -41,7 +41,7 @@ void setup() {
 
 // the loop routine runs over and over again forever:
 void loop() {
-    delay(1000);
+    delay(2000);
     if(Serial1.available() > 0){
         Serial1.readBytes(serialIn,Serial1.available());	
         for (size_t i = 1; i <= 7; i++)
