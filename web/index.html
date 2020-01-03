@@ -122,7 +122,15 @@
             <div class="row mt-5 col-11">
                 <div class="col-xl-12">
                     <div class="mt-3 ml-1 mr-1 p-3 rounded-lg border border-white bg-dark d-flex justify-content-between">
-                        <p class="mb-auto">IP:{{ ip }}</p>
+                        <div class="row">
+                            <p class="col-md-12 mt-auto mb-auto">IP:{{ ip }}</p>
+                            <div class="col-md-12 col-lg-12 d-flex justify-content-around">
+                                <button type="button" onclick="window.location.reload()" class="btn btn-success m-1">刷新界面</button>
+                                <button type="button" v-on:click="reload" class="btn btn-success m-1">重载后端</button>
+                                <button type="button" v-on:click="reboot" class="btn btn-success m-1">重启设备</button>
+                                <button type="button" v-on:click="poweroff" class="btn btn-success m-1">关闭设备</button>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div v-for="(data,key) in item" class="col-xl-12">
@@ -175,7 +183,7 @@
                         targetIdSharp: '#targetHUMI',
                         name: '环境湿度',
                         data: 'NULL',
-                        unit: ' ',
+                        unit: '%',
                         popover: '2'
                     },
                     hcho: {
@@ -184,7 +192,7 @@
                         targetIdSharp: '#targetHCHO',
                         name: '甲醛浓度',
                         data: 'NULL',
-                        unit: 'PPM',
+                        unit: 'PPb',
                         popover: '3'
                     },
                     eco2: {
@@ -217,10 +225,31 @@
                 this.time = this.zeroPadding(cd.getHours(), 2) + ':' + this.zeroPadding(cd.getMinutes(), 2) + ':' + this.zeroPadding(cd.getSeconds(), 2);
                 this.date = this.zeroPadding(cd.getFullYear(), 4) + '-' + this.zeroPadding(cd.getMonth()+1, 2) + '-' + this.zeroPadding(cd.getDate(), 2);
                 this.week = this.weekList[cd.getDay()]
+            },
+            getData: function(){
+                axios
+                .post('/control/sensorData.php')
+                .then(response => {
+                    if(response.data=='0'){
+                        for(item in pageOverviewData.$data.item){
+                            pageOverviewData.$data['item'][item]['data'] = '后端未启动';
+                        }
+                    }else{
+                        for(item in pageOverviewData.$data.item){
+                            pageOverviewData.$data['item'][item]['data'] = response.data[item];
+                        }
+                    }
+
+                })
+                .catch(function (error) { // 请求失败处理
+                    console.log(error);
+                });
             }
+
         },
         mounted: function() {
             setInterval(this.updateTime,100);
+            setInterval(this.getData,1000);
         }
     });
     var deviceData = new Vue({
@@ -276,6 +305,42 @@
                 .catch(function (error) {
                     console.log(error);
                 });
+            },
+            reloadPage: function(){
+                this.reload()
+            },
+            reload: function(){
+                axios
+                .get('/control/deviceCtl.php', {
+                    params: {
+                        mode: 'poweroff'
+                    }
+                })
+                .catch(function (error) { // 请求失败处理
+                    console.log(error);
+                });
+            },
+            reboot: function(){
+                axios
+                .get('/control/deviceCtl.php', {
+                    params: {
+                        mode: 'reboot'
+                    }
+                })
+                .catch(function (error) { // 请求失败处理
+                    console.log(error);
+                });
+            },
+            poweroff: function(){
+                axios
+                .get('/control/deviceCtl.php', {
+                    params: {
+                        mode: 'poweroff'
+                    }
+                })
+                .catch(function (error) { // 请求失败处理
+                    console.log(error);
+                });
             }
         },
         mounted: function() {
@@ -285,14 +350,6 @@
     });
     
     
-// $(document).ready(function(){
-//     $("p").mouseenter(function(){
-//         $("p").css("background-color","yellow");
-//     });
-//     $("p").mouseleave(function(){
-//     $("p").css("background-color","lightgray");
-//   });
-// });
 $(function () {
   $('.example-popover').popover({
     container: 'body'
