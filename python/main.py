@@ -8,6 +8,7 @@ from configobj import ConfigObj
 import logging as LOG
 import traceback
 import ctl
+import subprocess
 ## 预定义变量
 configPath = sys.path[0]+'/config.conf'
 logPath = sys.path[0]+'/logs/envsys.log'
@@ -66,7 +67,16 @@ config=ctl.getGlobalVar('config')
 
 # ThreadCL.join()
 
-
+class phpProcess(threading.Thread):
+    def __init__(self):
+        threading.Thread.__init__(self)
+        pass
+    def run(self):
+        subprocess.run('php -S localhost:'+ config['Common']['httpPort'] +' -t ' + sys.path[0] + '/web/ &> /tmp/sysenv_php.log', shell=True)
+        # os.execl('/usr/bin/php','php','-S', 'localhost:'+ config['Common']['httpPort'], '-t', sys.path[0] + '/web/')
+ThreadPHP = phpProcess()
+ThreadPHP.setDaemon(True)
+ThreadPHP.start()
 
 
 ### 传感器数据获取线程

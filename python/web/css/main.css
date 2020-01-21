@@ -1,0 +1,64 @@
+/* 定义字体 */
+@font-face {
+	font-family: 'Digital-7';
+	src: url(../font/digital-7.ttf);
+}
+
+@font-face {
+	font-family: 'Got No Time For That';
+	src: url(../font/Got_No_Time_For_That.ttf);
+}
+
+body {
+    background-color: #000!important;
+    color: #fff;
+}
+
+nav {
+    font-size: 1rem !important;
+    background-color: #000;
+    
+}
+
+@media screen and (min-width: 769px) {
+    nav {
+        font-size: 1.5rem !important;
+    }
+}
+#navFake {
+    height: 6rem;
+}
+
+
+#clock {
+    font-family: 'Share Tech Mono', monospace;
+
+    padding: 1rem;
+}
+#clockTime {
+    font-family: Digital-7, sans-serif;
+    letter-spacing: 0.05em;
+    font-size: 6rem;
+    font-weight: bold;
+}
+#clock .date {
+    display: inline;
+    letter-spacing: 0.1em;
+    font-size: 1rem;
+
+}
+#clock .week {
+    display: inline;
+    letter-spacing: 0.1em;
+    font-size: 1.2rem;
+}
+
+
+/* #mainContainer section:not(#pageOverview){
+    display: none;
+} */
+/* @media screen and (max-width: 576px) {
+    #clock {
+        display: none;
+    }
+} */

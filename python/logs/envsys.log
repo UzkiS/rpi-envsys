@@ -311,3 +311,42 @@
 2020-01-21 16:19:03    INFO:Pull data thread started.
 2020-01-21 16:19:06    INFO:Sensor [formaldehyde] watch thread started.
 2020-01-21 16:19:09    INFO:Push data thread started. Port [16868] Host [127.0.0.1]
+2020-01-21 18:16:43    INFO:Pull data thread started.
+2020-01-21 18:17:17    INFO:Pull data thread started.
+2020-01-21 18:17:20    INFO:Sensor [formaldehyde] watch thread started.
+2020-01-21 18:17:22    INFO:Pull data thread started.
+2020-01-21 18:17:54    INFO:Pull data thread started.
+2020-01-21 18:17:57    INFO:Sensor [formaldehyde] watch thread started.
+2020-01-21 18:18:11    INFO:Pull data thread started.
+2020-01-21 18:18:12    ERROR:['Traceback (most recent call last):\n', '  File "/mnt/c/Users/LeapLu/Documents/GitProject/rpi-envsys/python/ctl/hatCtl.py", line 32, in pullData\n    readData = buf.decode(\'utf-8\')\n', "UnicodeDecodeError: 'utf-8' codec can't decode byte 0xfa in position 0: invalid start byte\n"]
+2020-01-21 18:18:14    INFO:Sensor [formaldehyde] watch thread started.
+2020-01-21 18:18:15    INFO:Pull data thread started.
+2020-01-21 18:18:18    INFO:Push data thread started. Port [16868] Host [127.0.0.1]
+2020-01-21 18:18:59    INFO:Pull data thread started.
+2020-01-21 18:19:02    INFO:Sensor [formaldehyde] watch thread started.
+2020-01-21 18:19:05    INFO:Push data thread started. Port [16868] Host [127.0.0.1]
+2020-01-21 18:19:09    INFO:Client connectd('127.0.0.1', 50027)
+2020-01-21 18:19:10    INFO:Client connectd('127.0.0.1', 50029)
+2020-01-21 18:19:10    INFO:Client connectd('127.0.0.1', 50034)
+2020-01-21 18:19:12    INFO:Client connectd('127.0.0.1', 50038)
+2020-01-21 18:19:12    INFO:Client connectd('127.0.0.1', 50042)
+2020-01-21 18:19:12    INFO:Client connectd('127.0.0.1', 50045)
+2020-01-21 18:19:12    INFO:Client connectd('127.0.0.1', 50048)
+2020-01-21 18:19:12    INFO:Client connectd('127.0.0.1', 50051)
+2020-01-21 18:19:12    INFO:Client connectd('127.0.0.1', 50054)
+2020-01-21 18:19:13    INFO:Client connectd('127.0.0.1', 50057)
+2020-01-21 18:19:13    INFO:Client connectd('127.0.0.1', 50060)
+2020-01-21 18:19:13    INFO:Client connectd('127.0.0.1', 50063)
+2020-01-21 18:19:18    INFO:Client connectd('127.0.0.1', 50067)
+2020-01-21 18:19:19    INFO:Client connectd('127.0.0.1', 50071)
+2020-01-21 18:19:20    INFO:Client connectd('127.0.0.1', 50075)
+2020-01-21 18:19:20    INFO:Client connectd('127.0.0.1', 50082)
+2020-01-21 18:20:35    INFO:Client connectd('127.0.0.1', 50123)
+2020-01-21 18:20:41    INFO:Client connectd('127.0.0.1', 50126)
+2020-01-21 18:20:43    INFO:Client connectd('127.0.0.1', 50128)
+2020-01-21 18:20:43    INFO:Client connectd('127.0.0.1', 50132)
+2020-01-21 18:20:43    INFO:Client connectd('127.0.0.1', 50135)
+2020-01-21 18:21:05    INFO:Client connectd('127.0.0.1', 50143)
+2020-01-21 18:22:20    INFO:Client connectd('127.0.0.1', 50153)
+2020-01-21 18:22:24    INFO:Client connectd('127.0.0.1', 50155)
+2020-01-21 18:22:26    INFO:Client connectd('127.0.0.1', 50156)
