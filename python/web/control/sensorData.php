@@ -6,7 +6,7 @@ if(socket_connect($sock, $address, $port)){
     $msg = 'getAllSensorDataWithStatus';
     socket_send ($sock , $msg , strlen($msg) , 0) ;
     // socket_write($sock,$msg);
-    socket_recv ($sock , $buf , 1024 , MSG_WAITALL );
+    socket_recv ($sock , $buf , 5120 , MSG_WAITALL );
 
 
 

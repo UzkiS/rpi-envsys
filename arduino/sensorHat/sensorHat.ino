@@ -20,7 +20,7 @@ uint32_t hchoHightNum, hchoLowNum;
 float dhtTemperature, dhtHumidity;
 uint32_t hchoSum = 0;
 uint32_t checkSum = 0;
-int32_t formaldehydeData, temperatureData, humidityData, lightData;
+int32_t temperatureData, humidityData, eco2Data = 0, tvocData = 0,formaldehydeData, lightData;
 String resultJson;
 uint32_t getAbsoluteHumidity(float temperature, float humidity) {
     // approximation formula from Sensirion SGP30 Driver Integration chapter 3.15
@@ -141,9 +141,11 @@ void loop() {
     lightData = analogRead(A0);
 
     StaticJsonDocument<200> doc;
-    doc["formaldehyde"] = formaldehydeData;
     doc["temperature"] = temperatureData;
     doc["humditiy"] = humidityData;
+    doc["eco2"] = eco2Data;
+    doc["formaldehyde"] = formaldehydeData;
+    doc["tvoc"] = tvocData;
     doc["light"] = lightData;
         
     serializeJson(doc, resultJson);

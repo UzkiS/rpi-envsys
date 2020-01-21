@@ -1,19 +1,21 @@
 <?php
-function get_client_ip() {
-    if ($_SERVER['REMOTE_ADDR']) {
-        $cip = $_SERVER['REMOTE_ADDR'];
-    } elseif (getenv("REMOTE_ADDR")) {
-        $cip = getenv("REMOTE_ADDR");
-    } elseif (getenv("HTTP_CLIENT_IP")) {
-        $cip = getenv("HTTP_CLIENT_IP");
-    } else {
-        $cip = "unknown";
-    }
-    return $cip;
-}
-
-switch ($_GET['mode'])
+function get_client_ip()
 {
+    $data = json_decode(shell_exec('ip -4 -j a'), TRUE);
+    $ip = array();
+    $count = 0;
+    foreach ($data as $dataItem) {
+        $ipAddr = $dataItem['addr_info'][0]['local'];
+        $ipHead = substr($ipAddr, 0, 3);
+        if ($ipHead != '169') {
+            $ip[$count] = $ipAddr;
+            $count++;
+        }
+    }
+    return json_encode($ip);
+}
+// $_SERVER['SERVER_NAME'] 
+switch ($_GET['mode']) {
     case 'ip':
         echo get_client_ip();
         break;
@@ -22,9 +24,8 @@ switch ($_GET['mode'])
         break;
     case 'reboot':
         shell_exec('sudo reboot');
-        break;  
+        break;
     case 'poweroff':
         shell_exec('sudo poweroff');
         break;
 }
-?>

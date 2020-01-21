@@ -72,7 +72,8 @@ class phpProcess(threading.Thread):
         threading.Thread.__init__(self)
         pass
     def run(self):
-        subprocess.run('php -S localhost:'+ config['Common']['httpPort'] +' -t ' + sys.path[0] + '/web/ &> /tmp/sysenv_php.log', shell=True)
+        subprocess.run('php -S localhost:'+ config['Common']['httpPort'] +' -t ' + sys.path[0] + '/web/ &', shell=True)
+        # subprocess.run('php -S localhost:'+ config['Common']['httpPort'] +' -t ' + sys.path[0] + '/web/ &> /tmp/sysenv_php.log', shell=True)
         # os.execl('/usr/bin/php','php','-S', 'localhost:'+ config['Common']['httpPort'], '-t', sys.path[0] + '/web/')
 ThreadPHP = phpProcess()
 ThreadPHP.setDaemon(True)

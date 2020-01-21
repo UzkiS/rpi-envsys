@@ -6,7 +6,7 @@ import logging as LOG
 import traceback
 import ctl
 import json
-
+import sqlite3
 ##### 前后端数据传输线程
 class pushSensorData(threading.Thread):
     def __init__(self, host = '127.0.0.1', port = 16868):
@@ -33,7 +33,6 @@ class pushSensorData(threading.Thread):
                 print(self._msg)
                 self._flag = False
         server.listen(5)
-        # server.settimeout(5)
         conn_list = []
         coon_sock = {}
         self._flag = True
@@ -67,15 +66,24 @@ class pushSensorData(threading.Thread):
                 elif data == 'getAllSensorDataWithStatus':
                     # if ctl.getGlobalVar('sensorData'):
                     #     conn.send(json.dumps(ctl.getGlobalVar('sensorData')).encode('utf-8'))
+                    db = sqlite3.connect(ctl.getGlobalVar('config')['Common']['DB']).cursor()
+                    
                     print('recive:' + data)
                     sensorData = ctl.getGlobalVar('sensorData')
                     sensorDataStatus = ctl.getGlobalVar('flag')
                     # sensorDataStatus = ctl.getGlobalVar('sensorDataStatus')
                     result = {}
                     for item in sensorData:
+                        print(item)
+                        db.execute("SELECT cname, unit, comment from sensor WHERE name = ?", (item,))
+                        for row in db:
+                            cname, unit, comment = row[0], row[1], row[2]
                         result[item] = {}
+                        result[item]['cname'] = cname
                         result[item]['data'] = sensorData[item]
                         result[item]['status'] = sensorDataStatus[item]
+                        result[item]['unit'] = unit
+                        result[item]['comment'] = comment
                     conn.send(json.dumps(result).encode('utf-8'))
                     conn.close()
                     break

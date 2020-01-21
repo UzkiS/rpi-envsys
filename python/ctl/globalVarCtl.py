@@ -1,9 +1,11 @@
 class globalVar:
     var = {
         'flag' : {
-            'formaldehyde' : -1,
             'temperature' : -1, 
             'humditiy' : -1,
+            'eco2' : -1,
+            'tvoc' : -1,
+            'formaldehyde' : -1,
             'light' : -1
         }
     } 

@@ -1,9 +1,10 @@
 <!doctype html>
 <html lang="zh-CN">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport"
-          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+        content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>管理控制中心</title>
     <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.3.1/css/bootstrap.min.css">
@@ -13,79 +14,87 @@
     <script src="https://cdn.staticfile.org/axios/0.19.0-beta.1/axios.min.js"></script>
     <link rel="stylesheet" href="/css/main.css">
 </head>
+
 <body>
 
-<header>
-    <nav id="navbar" class="navbar navbar-expand-md navbar-dark fixed-top">
-        <!-- Brand -->
-        <a class="navbar-brand" href="#">管理控制中心</a>
-        
-        <!-- Toggler/collapsibe Button -->
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navMain">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div id="navMain" class="collapse navbar-collapse">
-            <ul class="navbar-nav ml-auto text-center">
-                <li class="nav-item"><a class="nav-link" v-on:click="showPage = 'pageOverview'" href="#">状态概览</a></li>
-                <li class="nav-item"><a class="nav-link" v-on:click="showPage = 'pageSenceCtl'" href="#">情景设置</a></li>
-                <li class="nav-item"><a class="nav-link" v-on:click="showPage = 'pageSysSetting'" href="#">系统设置</a></li>
-                <li class="nav-item"><a class="nav-link" v-on:click="showPage = 'pageDeviceCtl'" href="#">设备管理</a></li>
+    <header>
+        <nav id="navbar" class="navbar navbar-expand-md navbar-dark fixed-top">
+            <!-- Brand -->
+            <a class="navbar-brand" href="#">管理控制中心</a>
+
+            <!-- Toggler/collapsibe Button -->
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navMain">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div id="navMain" class="collapse navbar-collapse">
+                <ul class="navbar-nav ml-auto text-center">
+                    <li class="nav-item"><a class="nav-link" v-on:click="showPage = 'pageOverview'" href="#">状态概览</a>
+                    </li>
+                    <li class="nav-item"><a class="nav-link" v-on:click="showPage = 'pageSenceCtl'" href="#">情景设置</a>
+                    </li>
+                    <li class="nav-item"><a class="nav-link" v-on:click="showPage = 'pageSysSetting'" href="#">系统设置</a>
+                    </li>
+                    <li class="nav-item"><a class="nav-link" v-on:click="showPage = 'pageDeviceCtl'" href="#">设备管理</a>
+                    </li>
                 </ul>
-        </div>
-        <!-- <ul id="navScen">
+            </div>
+            <!-- <ul id="navScen">
         </ul> -->
-    </nav>
-    <div id="navFake"></div>
-</header>
+        </nav>
+        <div id="navFake"></div>
+    </header>
 
-<div id="mainContainer" class="container">
-    <!-- 状态概览 -->
-    <section id="pageOverview">
-        <div class="row d-flex justify-content-center">
-            <div id="clock" class="col-sm-12 col-md-12 col-lg-5 text-center d-none d-sm-block" v-cloak>
-                <p id="clockTime">{{ time }}</p>
-                <div>
-                    <p class="date">{{ date }}</p>
-                    <p class="week">{{ week }}</p>
-                </div>
-            </div>
-            <div id="statusTips" class="col-sm-12 col-md col-lg-5 bg-dark ml-4 mr-4 p-auto">
-                <div class="p-auto bg-light mt-auto mb-auto">
-                        <p class="p-auto">当前状态{{ sysStatus }}</p>
-                </div>
-
-            </div>
-        </div>
-        <div class="d-flex justify-content-center">
-            <div class="row mt-5 col-11">
-                <div v-for="(data,key) in item" class="col-sm-6 col-lg-3 col-xl-12">
-                    <!-- <div class="mt-4 ml-1 mr-1 p-3 rounded-lg border border-white" tabindex="0" data-toggle="popover" data-placement="top" data-trigger="focus" title="Dismissible popover" v-bind:data-content="data.popover">  -->
-                    <div class="mt-4 ml-1 mr-1 p-3 rounded-lg border border-white" data-toggle="modal" v-bind:data-target="data.targetIdSharp"> 
-                        <h3>{{ data.name }}</h3>
-                        <p class="m-0">{{ data.data }}<span class="small"> {{ data.unit }}</span></p>
+    <div id="mainContainer" class="container">
+        <!-- 状态概览 -->
+        <section id="pageOverview">
+            <div class="row d-flex justify-content-center">
+                <div id="clock" class="col-sm-12 col-md-12 col-lg-5 text-center d-none d-sm-block" v-cloak>
+                    <p id="clockTime">{{ time }}</p>
+                    <div>
+                        <p class="date">{{ date }}</p>
+                        <p class="week">{{ week }}</p>
                     </div>
-                    <!-- Modal -->
-                    <div class="modal fade" v-bind:id="data.targetId" tabindex="-1" role="dialog" aria-hidden="true">
-                        <div class="modal-dialog modal-dialog-centered" role="document">
-                            <div class="modal-content bg-dark">
-                                <div class="modal-header">
-                                    <h5 class="modal-title" >{{ data.name }}说明</h5>
-                                </div>
-                                <div class="modal-body">
-                                    {{ data.popover }}
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+                <div id="statusTips" class="col-sm-12 col-md col-lg-5 bg-dark ml-4 mr-4 p-auto">
+                    <div class="p-auto bg-light mt-auto mb-auto">
+                        <p class="p-auto">当前状态{{ sysStatus }}</p>
+                    </div>
+
+                </div>
+            </div>
+            <div class="d-flex justify-content-center">
+                <div class="row mt-3 col-11">
+                    <div v-for="(data,key) in item" class="col-sm-6 col-lg-4 col-xl-12">
+                        <!-- <div class="mt-4 ml-1 mr-1 p-3 rounded-lg border border-white" tabindex="0" data-toggle="popover" data-placement="top" data-trigger="focus" title="Dismissible popover" v-bind:data-content="data.popover">  -->
+                        <div class="mt-4 ml-1 mr-1 p-3 rounded-lg border border-white" data-toggle="modal"
+                            v-bind:data-target="data.targetIdSharp">
+                            <h3>{{ data.cname }}</h3>
+                            <p class="m-0">{{ data.data }}<span class="small"> {{ data.unit }} </span></p>
+                        </div>
+                        <!-- Modal -->
+                        <div class="modal fade" v-bind:id="data.targetId" tabindex="-1" role="dialog"
+                            aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered" role="document">
+                                <div class="modal-content bg-dark">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title">{{ data.cname }}说明</h5>
+                                    </div>
+                                    <div class="modal-body">
+                                        {{ data.comment }}
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary"
+                                            data-dismiss="modal">Close</button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-    </section>
-    <!-- 情景设置 -->
-    <section id="pageSenceCtl">
+        </section>
+        <!-- 情景设置 -->
+        <section id="pageSenceCtl">
             <div class="d-flex justify-content-center">
                 <div class="row mt-5 col-11">
                     <div v-for="(data,key) in item" class="col-xl-12">
@@ -96,268 +105,322 @@
                     </div>
                 </div>
             </div>
-    </section>
-    <!-- 系统设置 -->
-    <section id="pageSysSetting">
+        </section>
+        <!-- 系统设置 -->
+        <section id="pageSysSetting">
             <div class="d-flex justify-content-center">
                 <div class="row mt-5 col-11">
                     <div v-for="(data,key) in item" class="col-xl-12">
-                        <div class="mt-3 ml-1 mr-1 p-3 rounded-lg border border-white" data-toggle="collapse" data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
+                        <div class="mt-3 ml-1 mr-1 p-3 rounded-lg border border-white" data-toggle="collapse"
+                            data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
                             <h3>{{ data.name }}</h3>
                             <p>{{ data.data }}</p>
                             <div class="collapse" id="collapseExample">
                                 <div class="">
-                                  Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident.
+                                    Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry
+                                    richardson ad squid. Nihil anim keffiyeh helvetica, craft beer labore wes anderson
+                                    cred nesciunt sapiente ea proident.
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-    </section>
-    
-    <!-- 设备管理 -->
-    <section id="pageDeviceCtl">
-        <div class="d-flex justify-content-center">
-            <div class="row mt-5 col-11">
-                <div class="col-xl-12">
-                    <div class="mt-3 ml-1 mr-1 p-3 rounded-lg border border-white bg-dark d-flex justify-content-between">
-                        <div class="row">
-                            <p class="col-md-12 mt-auto mb-auto">IP:{{ ip }}</p>
-                            <div class="col-md-12 col-lg-12 d-flex justify-content-around">
-                                <button type="button" onclick="window.location.reload()" class="btn btn-success m-1">刷新界面</button>
-                                <button type="button" v-on:click="reload" class="btn btn-success m-1">重载后端</button>
-                                <button type="button" v-on:click="reboot" class="btn btn-success m-1">重启设备</button>
-                                <button type="button" v-on:click="poweroff" class="btn btn-success m-1">关闭设备</button>
+        </section>
+
+        <!-- 设备管理 -->
+        <section id="pageDeviceCtl">
+            <div class="d-flex justify-content-center">
+                <div class="row mt-5 col-11">
+                    <div class="col-xl-12">
+                        <div
+                            class="mt-3 ml-1 mr-1 p-3 rounded-lg border border-white bg-dark d-flex justify-content-between">
+                            <div class="row">
+                                <p class="col-md-12 mt-auto mb-auto">IP:</p>
+                                <ul>
+                                    <li v-for="ipaddr in ip">
+                                        {{ ipaddr['addr'] }}
+                                    </li>
+                                </ul>
+                                <div class="col-md-12 col-lg-12 d-flex justify-content-around">
+                                    <button type="button" onclick="window.location.reload()"
+                                        class="btn btn-success m-1">刷新界面</button>
+                                    <button type="button" v-on:click="reload" class="btn btn-success m-1">重载后端</button>
+                                    <button type="button" v-on:click="reboot" class="btn btn-success m-1">重启设备</button>
+                                    <button type="button" v-on:click="poweroff"
+                                        class="btn btn-success m-1">关闭设备</button>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-                <div v-for="(data,key) in item" class="col-xl-12">
-                    <div class="mt-3 ml-1 mr-1 p-3 rounded-lg border border-white d-flex justify-content-between">
-                        <h3 class="mb-auto">{{ data.name }}</h3>
-                        <p class="mt-auto mb-auto">{{ data.data }}</p>
+                    <div v-for="(data,key) in item" class="col-xl-12">
+                        <div class="mt-3 ml-1 mr-1 p-3 rounded-lg border border-white d-flex justify-content-between">
+                            <h3 class="mb-auto">{{ data.name }}</h3>
+                            <p class="mt-auto mb-auto">{{ data.data }}</p>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
 
-<footer>
+        <footer>
 
-</footer>
+        </footer>
 
-<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
-<script>
-    var navData = new Vue({
-        el: '#navbar',
-        data: function() {
-            return {
-                showPage: 'pageOverview'
-            }
-        },
-        watch: {
-            showPage: function(showPage) {
-                $('#mainContainer section').slideUp("slow");
-                $('#' + showPage).slideDown('slow');
-            }
-        }
-    });
-    var pageOverviewData = new Vue({
-        el: '#pageOverview',
-        data: function() {
-            return {
-                item: {
-                    temp: {
-                        id: 1,
-                        targetId: 'targetTEMP',
-                        targetIdSharp: '#targetTEMP',
-                        name: '环境温度',
-                        data: 'NULL',
-                        unit: '℃',
-                        popover: '1'
-                    },
-                    humi: {
-                        id: 1,
-                        targetId: 'targetHUMI',
-                        targetIdSharp: '#targetHUMI',
-                        name: '环境湿度',
-                        data: 'NULL',
-                        unit: '%',
-                        popover: '2'
-                    },
-                    hcho: {
-                        id: 1,
-                        targetId: 'targetHCHO',
-                        targetIdSharp: '#targetHCHO',
-                        name: '甲醛浓度',
-                        data: 'NULL',
-                        unit: 'PPb',
-                        popover: '3'
-                    },
-                    eco2: {
-                        id: 1,
-                        targetId: 'targetECO2',
-                        targetIdSharp: '#targetECO2',
-                        name: 'eCO2浓度',
-                        data: 'NULL',
-                        unit: 'PPM',
-                        popover: '4'
+        <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+        <script>
+            var navData = new Vue({
+                el: '#navbar',
+                data: function () {
+                    return {
+                        showPage: 'pageOverview'
                     }
                 },
-                time: '00:00:00',
-                date: 'NULL',
-                week: 'NULL',
-                weekList: ['周日', '周一', '周二', '周三', '周四', '周五', '周六'],
-                sysStatus: 'NULL'
-            }
-        },
-        methods: {
-            zeroPadding: function(num, digit) {
-                var zero = '';
-                for(var i = 0; i < digit; i++) {
-                    zero += '0';
+                watch: {
+                    showPage: function (showPage) {
+                        $('#mainContainer section').slideUp("slow");
+                        $('#' + showPage).slideDown('slow');
+                    }
                 }
-                return (zero + num).slice(-digit);
-            },
-            updateTime: function() {
-                var cd = new Date();
-                this.time = this.zeroPadding(cd.getHours(), 2) + ':' + this.zeroPadding(cd.getMinutes(), 2) + ':' + this.zeroPadding(cd.getSeconds(), 2);
-                this.date = this.zeroPadding(cd.getFullYear(), 4) + '-' + this.zeroPadding(cd.getMonth()+1, 2) + '-' + this.zeroPadding(cd.getDate(), 2);
-                this.week = this.weekList[cd.getDay()]
-            },
-            getData: function(){
-                axios
-                .post('/control/sensorData.php')
-                .then(response => {
-                    if(response.data=='0'){
-                        for(item in pageOverviewData.$data.item){
-                            pageOverviewData.$data['item'][item]['data'] = '后端未启动';
-                        }
-                    }else{
-                        for(item in pageOverviewData.$data.item){
-                            pageOverviewData.$data['item'][item]['data'] = response.data[item];
-                        }
-                    }
-
-                })
-                .catch(function (error) { // 请求失败处理
-                    console.log(error);
-                });
-            }
-
-        },
-        mounted: function() {
-            setInterval(this.updateTime,100);
-            setInterval(this.getData,1000);
-        }
-    });
-    var deviceData = new Vue({
-        el: '#pageDeviceCtl',
-        data: function() {
-            return {
-                item: {
-                    cpuTemp: {
-                        id: 1,
-                        name: 'CPU温度',
-                        data: ' ',
-                        unit: '℃'
-                    },
-                    sysUpTime: {
-                        id: 2,
-                        name: '系统运行时间',
-                        data: ' ',
-                        unit: ''
-                    },
-                    memUsed: {
-                        id: 3,
-                        name: '内存占用',
-                        data: ' ',
-                        unit: '%'
+            });
+            var pageOverviewData = new Vue({
+                el: '#pageOverview',
+                data: function () {
+                    return {
+                        item: [],
+                        // temp: {
+                        //     id: 1,
+                        //     targetId: 'targetTEMP',
+                        //     targetIdSharp: '#targetTEMP',
+                        //     name: '环境温度',
+                        //     data: 'NULL',
+                        //     unit: '℃',
+                        //     popover: '1'
+                        // },
+                        // humi: {
+                        //     id: 1,
+                        //     targetId: 'targetHUMI',
+                        //     targetIdSharp: '#targetHUMI',
+                        //     name: '环境湿度',
+                        //     data: 'NULL',
+                        //     unit: '%',
+                        //     popover: '2'
+                        // },
+                        // hcho: {
+                        //     id: 1,
+                        //     targetId: 'targetHCHO',
+                        //     targetIdSharp: '#targetHCHO',
+                        //     name: '甲醛浓度',
+                        //     data: 'NULL',
+                        //     unit: 'PPb',
+                        //     popover: '3'
+                        // },
+                        // eco2: {
+                        //     id: 1,
+                        //     targetId: 'targetECO2',
+                        //     targetIdSharp: '#targetECO2',
+                        //     name: 'eCO2浓度',
+                        //     data: 'NULL',
+                        //     unit: 'PPM',
+                        //     popover: '4'
+                        // },
+                        // tvoc: {
+                        //     id: 1,
+                        //     targetId: 'targetTVOC',
+                        //     targetIdSharp: '#targetECO2',
+                        //     name: 'eCO2浓度',
+                        //     data: 'NULL',
+                        //     unit: 'PPM',
+                        //     popover: '4'
+                        // },
+                        // light: {
+                        //     id: 1,
+                        //     targetId: 'targetECO2',
+                        //     targetIdSharp: '#targetECO2',
+                        //     name: 'eCO2浓度',
+                        //     data: 'NULL',
+                        //     unit: 'PPM',
+                        //     popover: '4'
+                        // }
+                        // },
+                        time: '00:00:00',
+                        date: 'NULL',
+                        week: 'NULL',
+                        weekList: ['周日', '周一', '周二', '周三', '周四', '周五', '周六'],
+                        sysStatus: 'NULL'
                     }
                 },
-                ip: 'NULL'
-            }
-        },
-        methods: {
-            getData: function(){
-                axios
-                .get('/control/deviceData.php')
-                .then(response => {
-                    for(item in deviceData.$data.item){
-                        deviceData.$data['item'][item]['data'] = response.data[item];
+                methods: {
+                    zeroPadding: function (num, digit) {
+                        var zero = '';
+                        for (var i = 0; i < digit; i++) {
+                            zero += '0';
+                        }
+                        return (zero + num).slice(-digit);
+                    },
+                    updateTime: function () {
+                        var cd = new Date();
+                        this.time = this.zeroPadding(cd.getHours(), 2) + ':' + this.zeroPadding(cd.getMinutes(), 2) + ':' + this.zeroPadding(cd.getSeconds(), 2);
+                        this.date = this.zeroPadding(cd.getFullYear(), 4) + '-' + this.zeroPadding(cd.getMonth() + 1, 2) + '-' + this.zeroPadding(cd.getDate(), 2);
+                        this.week = this.weekList[cd.getDay()]
+                    },
+                    getData: function () {
+
+                        axios
+                            .post('/control/sensorData.php')
+                            .then(response => {
+                                if (response.data == '-1') {
+                                    for (item in pageOverviewData.$data.item) {
+                                        pageOverviewData.$data['item'][item]['data'] = '后端未启动';
+                                    }
+                                } else {
+                                    // for (item in pageOverviewData.$data.item) {
+                                    //     pageOverviewData.$data['item'][item]['data'] = response.data[item];
+                                    // }
+                                    this.item = []
+                                    for (item in response.data) {
+
+                                        var tId = 'target' + item;
+                                        var tIdS = '#' + tId;
+                                        this.item.push({
+                                            'name' : item,
+                                            'cname': response.data[item]['cname'],
+                                            'data': response.data[item]['data'],
+                                            'status': response.data[item]['status'],
+                                            'unit': response.data[item]['unit'],
+                                            'comment' : response.data[item]['comment'],
+                                            'targetId'  : tId,
+                                            'targetIdSharp' : tIdS
+
+                                        })
+
+                                        // console.log(item);
+                                    }
+                                }
+
+                            })
+                            .catch(function (error) { // 请求失败处理
+                                console.log(error);
+                            });
                     }
-                })
-                .catch(function (error) {
-                    console.log(error);
-                });
-            },
-            getIP: function(){
-                axios
-                .get('/control/deviceCtl.php', {
-                    params: {
-                        mode: 'ip'
+
+                },
+                mounted: function () {
+                    setInterval(this.updateTime, 100);
+                    setInterval(this.getData, 1000);
+                }
+            });
+            var deviceData = new Vue({
+                el: '#pageDeviceCtl',
+                data: function () {
+                    return {
+                        item: {
+                            cpuTemp: {
+                                id: 1,
+                                name: 'CPU温度',
+                                data: ' ',
+                                unit: '℃'
+                            },
+                            sysUpTime: {
+                                id: 2,
+                                name: '系统运行时间',
+                                data: ' ',
+                                unit: ''
+                            },
+                            memUsed: {
+                                id: 3,
+                                name: '内存占用',
+                                data: ' ',
+                                unit: '%'
+                            }
+                        },
+                        ip: []
                     }
-                })
-                .then(response => {
-                    this.ip=response.data
-                })
-                .catch(function (error) {
-                    console.log(error);
-                });
-            },
-            reloadPage: function(){
-                this.reload()
-            },
-            reload: function(){
-                axios
-                .get('/control/deviceCtl.php', {
-                    params: {
-                        mode: 'poweroff'
+                },
+                methods: {
+                    getData: function () {
+                        axios
+                            .get('/control/deviceData.php')
+                            .then(response => {
+                                for (item in deviceData.$data.item) {
+                                    deviceData.$data['item'][item]['data'] = response.data[item];
+                                }
+                            })
+                            .catch(function (error) {
+                                console.log(error);
+                            });
+                    },
+                    getIP: function () {
+                        axios
+                            .get('/control/deviceCtl.php', {
+                                params: {
+                                    mode: 'ip'
+                                }
+                            })
+                            .then(response => {
+                                this.ip = []
+                                len = response.data.length
+                                for (item in response.data) {
+                                    this.ip.push({ 'addr': response.data[item] })
+                                }
+                            })
+                            .catch(function (error) {
+                                console.log(error);
+                            });
+                    },
+                    reloadPage: function () {
+                        this.reload()
+                    },
+                    reload: function () {
+                        axios
+                            .get('/control/deviceCtl.php', {
+                                params: {
+                                    mode: 'poweroff'
+                                }
+                            })
+                            .catch(function (error) { // 请求失败处理
+                                console.log(error);
+                            });
+                    },
+                    reboot: function () {
+                        axios
+                            .get('/control/deviceCtl.php', {
+                                params: {
+                                    mode: 'reboot'
+                                }
+                            })
+                            .catch(function (error) { // 请求失败处理
+                                console.log(error);
+                            });
+                    },
+                    poweroff: function () {
+                        axios
+                            .get('/control/deviceCtl.php', {
+                                params: {
+                                    mode: 'poweroff'
+                                }
+                            })
+                            .catch(function (error) { // 请求失败处理
+                                console.log(error);
+                            });
                     }
+                },
+                mounted: function () {
+                    setInterval(this.getData, 1000);
+                    setInterval(this.getIP, 1000);
+                }
+            });
+
+
+            $(function () {
+                $('.example-popover').popover({
+                    container: 'body'
                 })
-                .catch(function (error) { // 请求失败处理
-                    console.log(error);
-                });
-            },
-            reboot: function(){
-                axios
-                .get('/control/deviceCtl.php', {
-                    params: {
-                        mode: 'reboot'
-                    }
-                })
-                .catch(function (error) { // 请求失败处理
-                    console.log(error);
-                });
-            },
-            poweroff: function(){
-                axios
-                .get('/control/deviceCtl.php', {
-                    params: {
-                        mode: 'poweroff'
-                    }
-                })
-                .catch(function (error) { // 请求失败处理
-                    console.log(error);
-                });
-            }
-        },
-        mounted: function() {
-            setInterval(this.getData,1000);
-            setInterval(this.getIP,1000);
-        }
-    });
-    
-    
-$(function () {
-  $('.example-popover').popover({
-    container: 'body'
-  })
-})
-$(function () {
-  $('[data-toggle="popover"]').popover()
-})
-</script>
+            })
+            $(function () {
+                $('[data-toggle="popover"]').popover()
+            })
+        </script>
 </body>
+
 </html>

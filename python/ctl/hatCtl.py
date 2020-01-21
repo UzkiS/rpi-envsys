@@ -20,7 +20,7 @@ class pullHatData(threading.Thread):
             self._msg = 'Pull data thread started.'
             LOG.info(self._msg)
             print(self._msg)
-            ctl.setGlobalVar('flagPushD', True)
+            # ctl.setGlobalVar('flagPushD', True)
             serialFd = serial.Serial(dev , baudRate, timeout=0)
             try:
                 while True:
@@ -34,7 +34,7 @@ class pullHatData(threading.Thread):
                         ctl.setGlobalVar('sensorData', sensorData)
                         # print(ctl.getGlobalVar('sensorData'))
                         
-
+                        ctl.setGlobalVar('flagPushD', True)
                     #     ctl.setGlobalVar('flagPushD', True)
             except:
                 exc_type, exc_value, exc_traceback = sys.exc_info()
