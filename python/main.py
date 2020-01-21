@@ -1,96 +1,96 @@
-#-*- coding:utf-8 -*-
-
-import RPi.GPIO as GPIO
+# import RPi.GPIO as GPIO
 import time,os
-import control
 import sys
+import socket
 from pathlib import Path
-from multiprocessing import Process, Manager, Event
+import threading
+from configobj import ConfigObj
+import logging as LOG
+import traceback
+import ctl
+## 预定义变量
+configPath = sys.path[0]+'/config.conf'
+logPath = sys.path[0]+'/logs/envsys.log'
+## 预定义全局线程锁
+ctl.setGlobalVar('flagPushD', False)
 
-defaultGlobalConfig = {
-    'GPIO' : {
-        'ledWhitePin' : 16,
-        'ledYellowPin' : 20,
-        'ledRedPin' : 21,
-        'lightSensorPin' : 26,
-        'fireSensorPin' : 19,
-        'pirSensorPin' : 17,
-        'pirSensorEPin' : 23,
-        'buzPin' : 12
-    },
-    'Hat' : {
-        'serialDeviceName' : '/dev/ttyUSB0',
-        'sendSerPort' : '16868'
-    }
-}
+## 预定义日志选项
+LOG.basicConfig(filename=logPath, format='%(asctime)s    %(levelname)s:%(message)s', datefmt='%Y-%m-%d %H:%M:%S', level=LOG.DEBUG,)
 
-GPIO.setmode(GPIO.BCM)
-
-CommonConfigDir = './config/'
-configNameList = ['GPIO', 'Hat']
-
-
-configManager = Manager().dict()
-sensorDataList = Manager().dict()
-
-hatEvent = Event()
-saveConfigEvent = Event()
-offEvent = Event()
-
-
-
-def main():
-    # GPIO.setup(gpio_light_sensor, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
-    # GPIO.setup(gpio_pir_sensor_1, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
-    # GPIO.add_event_detect(gpio_light_sensor, GPIO.BOTH, callback=a, bouncetime=200)
-    # GPIO.add_event_detect(gpio_light_sensor, GPIO.BOTH, callback=a, bouncetime=200)
-    # GPIO.add_event_callback()
-    # GPIO.cleanup()
-
-    # Load config
-    if control.initConfig(defaultGlobalConfig , configNameList) & control.loadConfig(configManager ,configNameList):
+## 定义线程
+##### 保存配置线程
+class saveConfig(threading.Thread):
+    def __init__(self):
+        threading.Thread.__init__(self)
         pass
-    else:
-        sys.exit(2)
+    def run(self):
+        pass
+
+
+
+##### 显示屏控制线程
+class ctlLCD(threading.Thread):
+    def __init__(self,pin):
+        threading.Thread.__init__(self)
+        self._pin = pin
+        pass
+    def run(self):
+        print(config)
     
-    # Setup GPIO status
-    chanOutHighList = []
-    chanOutLowList = [int(configManager['buzPin']),int(configManager['ledWhitePin'])]
-    GPIO.setup(chanOutLowList, GPIO.OUT, initial=GPIO.LOW)
-
-    chanInList = []
-    GPIO.setup(chanInList, GPIO.IN)
+##主程序开始
+###读取配置
+# config = ConfigObj(configPath)
+ctl.setGlobalVar('config', ConfigObj(configPath))
+config=ctl.getGlobalVar('config')
 
 
+# print(ctl.getGlobalVar('config'))
+# config.write()
+### 预设GPIO状态
+# outputHighList = [config['GPIO']['LCD']]
+# outputLowList = [config['GPIO']['BUZ']]
+# inputList = [config['GPIO']['PIR'], config['GPIO']['LDR']]
+
+# GPIO.setup(outputHighList, GPIO.OUT, initial=GPIO.HIGH)
+# GPIO.setup(chanOutLowList, GPIO.OUT, initial=GPIO.LOW)
+# GPIO.setup(inputList, GPIO.IN)
+
+
+# ThreadPullSD = pullSensorData()
+# ThreadPSD.setDaemon(True)
+# ThreadPSD.start()
+
+# ThreadCL = ctlLCD(config['GPIO']['LCD'])
+# ThreadCL.setDaemon(True)
+# ThreadCL.start()
+
+# ThreadCL.join()
 
 
 
-    dataGetProcess = Process(target = control.getSensorData, args = (sensorDataList, hatEvent, configManager['serialDeviceName']))
-    dataSendSerProcess = Process(target = control.creatDataSendServer, args = (sensorDataList, hatEvent, int(configManager['sendSerPort']),))
-    configSaveProcess = Process(target = control.wattingSaveConfig, args = (defaultGlobalConfig, configManager, configNameList, saveConfigEvent))
-    
-    dataGetProcess.start()
-    dataSendSerProcess.start()
-    configSaveProcess.start()
 
-    
-    dataSendSerProcess.join()
+### 传感器数据获取线程
+ThreadPullD = ctl.pullHatData()
+ThreadPullD.setDaemon(True)
+ThreadPullD.start()
 
-def restart():
-        python = sys.executable
-        os.execl(python, python, * sys.argv)
-    
+time.sleep(3)
 
+# ### 传感器数据推送线程
+ThreadPushD = ctl.pushSensorData()
+ThreadPushD.setDaemon(True)
+ThreadPushD.start()
 
-if __name__ == "__main__":
-    try:
-        main()
-    except:
-        print('Some error')
-        # saveConfigEvent.set()
-        # pass
-    finally:
-        
-        GPIO.cleanup()
-        # control.saveConfig(defaultGlobalConfig, configManager, configNameList)
-        print('Programm exit')
+### 状态检测线程
+ThreadStatusCheck = ctl.sensor(1)
+ThreadStatusCheck.setDaemon(True)
+ThreadStatusCheck.start()
+# ThreadPullD = ctl.hatCtl.pullHatData()
+# ThreadPullD.setDaemon(True)
+# ThreadPullD.start()
+
+# ThreadPullD.join()
+
+ #绑定要监听的端口
+# ThreadPullD.join()
+ThreadStatusCheck.join()

@@ -1,7 +1,3 @@
-/*
-
-*/
-
 #include <Adafruit_Sensor.h>
 #include <DHT.h>
 #include <DHT_U.h>
@@ -9,63 +5,71 @@
 #include <Adafruit_SGP30.h>
 #include <SoftwareSerial.h>
 #include <math.h>
+#include <ArduinoJson.h>
 #define DHTPIN  4
 #define DHTTYPE DHT11
 #define RX  2
 #define TX  3
-SoftwareSerial Serial1(RX, TX); 
+SoftwareSerial serialSensor(RX, TX); 
 DHT_Unified dht(DHTPIN, DHTTYPE);
 Adafruit_SGP30 sgp;
 uint32_t delayMS;
 byte serialIn[64];
 uint32_t a;
 uint32_t hchoHightNum, hchoLowNum;
-uint32_t tvocHightNum, tvocLowNum;
-uint32_t eco2HightNum, eco2LowNum;
-uint32_t DHTStatus = 0;
-uint32_t hchoStatus = 0;
 float dhtTemperature, dhtHumidity;
-uint32_t dhtTemp, dhtHumi;
 uint32_t hchoSum = 0;
 uint32_t checkSum = 0;
+int32_t formaldehydeData, temperatureData, humidityData, lightData;
+String resultJson;
+uint32_t getAbsoluteHumidity(float temperature, float humidity) {
+    // approximation formula from Sensirion SGP30 Driver Integration chapter 3.15
+    const float absoluteHumidity = 216.7f * ((humidity / 100.0f) * 6.112f * exp((17.62f * temperature) / (243.12f + temperature)) / (273.15f + temperature)); // [g/m^3]
+    const uint32_t absoluteHumidityScaled = static_cast<uint32_t>(1000.0f * absoluteHumidity); // [mg/m^3]
+    return absoluteHumidityScaled;
+}
 
-
-// unsigned char CheckSum(uchar *i,uncharln)
 
 // the setup routine runs once when you press reset:
 void setup() {
     Serial.begin(9600);
-    Serial1.begin(9600);
+    serialSensor.begin(9600);
     dht.begin();
+    //sgp.begin();
+    //StaticJsonDocument<200> doc;
+    // if (! sgp.begin()){
+    //     Serial.println("SGP sensor not found :(");
+    // }
+    // Serial.print(sgp.serialnumber[0], HEX);
+    // Serial.print(sgp.serialnumber[1], HEX);
+    // Serial.println(sgp.serialnumber[2], HEX);
 }
 
+int counter = 0;
 // the loop routine runs over and over again forever:
 void loop() {
     delay(2000);
-    if(Serial1.available() > 0){
-        Serial1.readBytes(serialIn,Serial1.available());	
+    //DART Start
+    if(serialSensor.available() > 0){
+        serialSensor.readBytes(serialIn,serialSensor.available());	
         for (size_t i = 1; i <= 7; i++)
         {
             hchoSum += serialIn[i];
         }
         if (serialIn[0] == 0xFF && serialIn[8] == byte(~(hchoSum)+1))
         {
-            //Serial.println("数据校验成功");
             hchoHightNum = serialIn[4];
             hchoLowNum = serialIn[5];
-            //Serial.print(hchoC);
-            //Serial.println("ppb ");
+
+            formaldehydeData = hchoHightNum * 256 + hchoLowNum;
         }else
         {
-            hchoHightNum = 0xEE;
-            hchoLowNum = 0xEE;
-            //Serial.println("数据校验失败");
+            formaldehydeData = -1;
         }
 
     }else
     {
-        hchoHightNum = 0xEE;
-        hchoLowNum = 0xEE;
+        formaldehydeData = -1;
     }
     
     hchoSum = 0;
@@ -74,12 +78,11 @@ void loop() {
     sensors_event_t dhtEvent;
     dht.temperature().getEvent(&dhtEvent);
     if (isnan(dhtEvent.temperature)) {
-        //Serial.println(F("Error reading temperature!"));
-        dhtTemp = 0xEE;
+        temperatureData = -1;
     }
     else {
         dhtTemperature = dhtEvent.temperature;
-        dhtTemp = floor(dhtTemperature);
+        temperatureData = floor(dhtTemperature);
         //Serial.print(F("Temperature: "));
         //Serial.print(dhtEvent.temperature);
         //Serial.println(F("°C"));
@@ -88,11 +91,11 @@ void loop() {
     dht.humidity().getEvent(&dhtEvent);
     if (isnan(dhtEvent.relative_humidity)) {
         //Serial.println(F("Error reading humidity!"));
-        dhtHumi = 0xEE;
+        humidityData = -1;
     }
     else {
         dhtHumidity = dhtEvent.relative_humidity;
-        dhtHumi = floor(dhtHumidity);
+        humidityData = floor(dhtHumidity);
 
         //Serial.print(F("Humidity: "));
         //Serial.print(dhtEvent.relative_humidity);
@@ -100,25 +103,56 @@ void loop() {
     }
 
 
-    tvocHightNum = 0x01;
-    tvocLowNum = 0x02;
-    eco2HightNum = 0x01;
-    eco2LowNum = 0x02;
+    //SGP Start
+    // If you have a temperature / humidity sensor, you can set the absolute humidity to enable the humditiy compensation for the air quality signals
+    // float temperature = dhtTemperature; // [°C]
+    // float humidity = dhtHumidity; // [%RH]
+    // sgp.setHumidity(getAbsoluteHumidity(dhtTemperature, dhtHumidity));
 
-    checkSum = ~(hchoHightNum + hchoLowNum + dhtTemp + dhtHumi + tvocHightNum + tvocLowNum +eco2HightNum +eco2LowNum) + 1;
+    // if (! sgp.IAQmeasure()) {
+    //     Serial.println("Measurement failed");
+    //     return;
+    // }
+    // Serial.print("TVOC "); Serial.print(sgp.TVOC); Serial.print(" ppb\t");
+    // Serial.print("eCO2 "); Serial.print(sgp.eCO2); Serial.println(" ppm");
 
-    Serial.write(0xFF);
-    Serial.write(hchoHightNum);
-    Serial.write(hchoLowNum);
-    Serial.write(dhtTemp);
-    Serial.write(dhtHumi);
-    Serial.write(tvocHightNum);
-    Serial.write(tvocLowNum);
-    Serial.write(eco2HightNum);
-    Serial.write(eco2LowNum);
-    Serial.write(0x00);
-    Serial.write(0x00);
-    Serial.write(checkSum);
+    // if (! sgp.IAQmeasureRaw()) {
+    //     Serial.println("Raw Measurement failed");
+    //     return;
+    // }
+    // Serial.print("Raw H2 "); Serial.print(sgp.rawH2); Serial.print(" \t");
+    // Serial.print("Raw Ethanol "); Serial.print(sgp.rawEthanol); Serial.println("");
     
+    // delay(1000);
+
+    // counter++;
+    // if (counter == 30) {
+    //     counter = 0;
+
+    //     uint16_t TVOC_base, eCO2_base;
+    //     if (! sgp.getIAQBaseline(&eCO2_base, &TVOC_base)) {
+    //     Serial.println("Failed to get baseline readings");
+    //     return;
+    //     }
+    //     Serial.print("****Baseline values: eCO2: 0x"); Serial.print(eCO2_base, HEX);
+    //     Serial.print(" & TVOC: 0x"); Serial.println(TVOC_base, HEX);
+    // }
+
+    lightData = analogRead(A0);
+
+    StaticJsonDocument<200> doc;
+    doc["formaldehyde"] = formaldehydeData;
+    doc["temperature"] = temperatureData;
+    doc["humditiy"] = humidityData;
+    doc["light"] = lightData;
+        
+    serializeJson(doc, resultJson);
+
+//    Serial.print(resultJson.length());
+//    Serial.print("\r\n\r\n");
+
+    Serial.print(resultJson);
+    Serial.print("\n");
     
+    resultJson.remove(0);
 }
