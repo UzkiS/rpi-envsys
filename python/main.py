@@ -77,7 +77,7 @@ ThreadPullD.start()
 time.sleep(3)
 
 # ### 传感器数据推送线程
-ThreadPushD = ctl.pushSensorData()
+ThreadPushD = ctl.pushSensorData(config['Common']['host'], int(config['Common']['sendSerPort']))
 ThreadPushD.setDaemon(True)
 ThreadPushD.start()
 
