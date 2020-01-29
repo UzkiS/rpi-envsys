@@ -93,9 +93,12 @@ ThreadPushD.setDaemon(True)
 ThreadPushD.start()
 
 ### 状态检测线程
-ThreadStatusCheck = ctl.sensor(1)
-ThreadStatusCheck.setDaemon(True)
-ThreadStatusCheck.start()
+for i in range(1, 7):
+    ThreadStatusCheck = ctl.sensor(i)
+    ThreadStatusCheck.setDaemon(True)
+    ThreadStatusCheck.start()
+
+    # print(i)
 # ThreadPullD = ctl.hatCtl.pullHatData()
 # ThreadPullD.setDaemon(True)
 # ThreadPullD.start()

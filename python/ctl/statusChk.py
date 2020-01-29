@@ -11,6 +11,7 @@ class sensor(threading.Thread):
     def __init__(self, uid):
         threading.Thread.__init__(self)
         self._uid = uid
+        self._name = 'NONE'
         pass
 
     def getlVar(self, cursor):
@@ -20,6 +21,14 @@ class sensor(threading.Thread):
             return row[0], row[1], row[2], row[3], row[4]
 
     def alarm(self, status, alarmMode = 0):
+        if status == -1:
+            print('status:' + self._name + " is not installed")
+        elif status == 0:
+            print('status:' + self._name + " is safe")
+        elif status == 1:
+            print('status:' + self._name + " is Warning")
+        elif status == 2:
+            print('status:' + self._name + " is Email")
         # status
         ### -1:err 0:safe 1:edge safe(yellow)  2.mail warning 3:buz warning(red)
         pass
@@ -67,8 +76,8 @@ class sensor(threading.Thread):
 
     
     def run(self):
-        conn = sqlite3.connect(ctl.getGlobalVar('config')['Common']['DB']).cursor()
-        name, lowVar, highVar, mtd, alarmMode = self.getlVar(conn)
+        conn = sqlite3.connect(sys.path[0] + '/' + ctl.getGlobalVar('config')['Common']['DB']).cursor()
+        self._name, lowVar, highVar, mtd, alarmMode = self.getlVar(conn)
         # print(name, lowVar, highVar, mtd)
-        self.watchVar(name, lowVar, highVar, mtd, alarmMode)
+        self.watchVar(self._name, lowVar, highVar, mtd, alarmMode)
         # while
