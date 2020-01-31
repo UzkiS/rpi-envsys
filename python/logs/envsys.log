@@ -10484,3 +10484,4 @@
 2020-01-27 22:42:28    INFO:Sensor [tvoc] watch thread started.
 2020-01-27 22:42:28    INFO:Sensor [eco2] watch thread started.
 2020-01-27 22:42:28    INFO:Sensor [light] watch thread started.
+2020-01-31 21:19:09    INFO:Pull data thread started.
