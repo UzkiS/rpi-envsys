@@ -1,5 +1,5 @@
-__pycache__
-.vscode
+__pycache__/
+.vscode/
 *.log
 # Python:
 *.py[cod]
