@@ -29,7 +29,7 @@ class pushSensorData(threading.Thread):
                 time.sleep(3)
             else:
                 self._msg = 'Push data thread started. Port [' + str(self._port) + '] Host [' + self._host + ']'
-                LOG.info(self._msg)
+                # LOG.info(self._msg)
                 print(self._msg)
                 self._flag = False
         server.listen(5)
@@ -45,8 +45,8 @@ class pushSensorData(threading.Thread):
             threading.Thread(target=self.tcpLink, args=(conn, addr)).start()
 
     def tcpLink(self, conn, addr):
-        print(self._msg)
-        LOG.info(self._msg)
+        # print(self._msg)
+        # LOG.info(self._msg)
         cont = 0
         while self._flag:
             try:
@@ -58,7 +58,7 @@ class pushSensorData(threading.Thread):
                 if data == 'getAllSensorData':
                     # if ctl.getGlobalVar('sensorData'):
                     #     conn.send(json.dumps(ctl.getGlobalVar('sensorData')).encode('utf-8'))
-                    print('recive:' + data)
+                    # print('recive:' + data)
                     conn.send(json.dumps(ctl.getGlobalVar('sensorData')).encode('utf-8'))
                     conn.close()
                     break
@@ -66,15 +66,14 @@ class pushSensorData(threading.Thread):
                 elif data == 'getAllSensorDataWithStatus':
                     # if ctl.getGlobalVar('sensorData'):
                     #     conn.send(json.dumps(ctl.getGlobalVar('sensorData')).encode('utf-8'))
-                    db = sqlite3.connect(ctl.getGlobalVar('config')['Common']['DB']).cursor()
-                    
-                    print('recive:' + data)
+                    db = sqlite3.connect(sys.path[0] + '/' + ctl.getGlobalVar('config')['Common']['DB']).cursor()
+                    # print('recive:' + data)
                     sensorData = ctl.getGlobalVar('sensorData')
                     sensorDataStatus = ctl.getGlobalVar('flag')
                     # sensorDataStatus = ctl.getGlobalVar('sensorDataStatus')
                     result = {}
                     for item in sensorData:
-                        print(item)
+                        # print(item)
                         db.execute("SELECT cname, unit, comment from sensor WHERE name = ?", (item,))
                         for row in db:
                             cname, unit, comment = row[0], row[1], row[2]
@@ -88,10 +87,17 @@ class pushSensorData(threading.Thread):
                     conn.close()
                     break
                     # print(ctl.getGlobalVar('sensorData').encode('utf-8'))
+                elif data == 'getDefaultSensorStatus':
+                    # if ctl.getGlobalVar('sensorData'):
+                    #     conn.send(json.dumps(ctl.getGlobalVar('sensorData')).encode('utf-8'))
+                    # print('recive:' + data)
+                    conn.send(json.dumps(ctl.getGlobalVar('flag')).encode('utf-8'))
+                    conn.close()
+                    break
                 else:
                     cont = cont + 1
                     if cont >= 5:
-                        raise Exception('Client maybe closed')
+                        raise Exception('Client maybe closed.')
             except:
                 exc_type, exc_value, exc_traceback = sys.exc_info()
                 print(traceback.format_exception(exc_type, exc_value, exc_traceback))

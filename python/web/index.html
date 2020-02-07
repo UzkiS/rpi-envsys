@@ -66,10 +66,14 @@
                 <div class="row mt-3 col-11">
                     <div v-for="(data,key) in item" class="col-sm-6 col-lg-4 col-xl-12">
                         <!-- <div class="mt-4 ml-1 mr-1 p-3 rounded-lg border border-white" tabindex="0" data-toggle="popover" data-placement="top" data-trigger="focus" title="Dismissible popover" v-bind:data-content="data.popover">  -->
-                        <div class="mt-4 ml-1 mr-1 p-3 rounded-lg border border-white" data-toggle="modal"
-                            v-bind:data-target="data.targetIdSharp">
-                            <h3>{{ data.cname }}</h3>
-                            <p class="m-0">{{ data.data }}<span class="small"> {{ data.unit }} </span></p>
+                        <div class="mt-4 ml-1 mr-1 p-3 rounded-lg border"
+                            v-bind:class="{ 'border-dark': data.status == -1, 'border-white': data.status == 0 || data.status == -2, 'border-warning': data.status == 1, 'border-danger': data.status == 2 }"
+                            data-toggle="modal" v-bind:data-target="data.targetIdSharp">
+                            <div v-bind:class="{ 'text-dark': data.status == -1, 'text-danger': data.status == 2 }">
+                                <h3>{{ data.cname }}</h3>
+                                <p class=" m-0">{{ data.data }}<span class="small"> {{ data.unit }} </span></p>
+                            </div>
+
                         </div>
                         <!-- Modal -->
                         <div class="modal fade" v-bind:id="data.targetId" tabindex="-1" role="dialog"
@@ -267,7 +271,11 @@
                     getData: function () {
 
                         axios
-                            .post('/control/sensorData.php')
+                            .get('/control/sensorData.php', {
+                                params: {
+                                    mode: 'data'
+                                }
+                            })
                             .then(response => {
                                 if (response.data == '-1') {
                                     for (item in pageOverviewData.$data.item) {
@@ -283,14 +291,14 @@
                                         var tId = 'target' + item;
                                         var tIdS = '#' + tId;
                                         this.item.push({
-                                            'name' : item,
+                                            'name': item,
                                             'cname': response.data[item]['cname'],
                                             'data': response.data[item]['data'],
                                             'status': response.data[item]['status'],
                                             'unit': response.data[item]['unit'],
-                                            'comment' : response.data[item]['comment'],
-                                            'targetId'  : tId,
-                                            'targetIdSharp' : tIdS
+                                            'comment': response.data[item]['comment'],
+                                            'targetId': tId,
+                                            'targetIdSharp': tIdS
 
                                         })
 

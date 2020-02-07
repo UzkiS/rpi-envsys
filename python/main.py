@@ -66,18 +66,18 @@ config=ctl.getGlobalVar('config')
 # ThreadCL.start()
 
 # ThreadCL.join()
-
-class phpProcess(threading.Thread):
-    def __init__(self):
-        threading.Thread.__init__(self)
-        pass
-    def run(self):
-        subprocess.run('php -S localhost:'+ config['Common']['httpPort'] +' -t ' + sys.path[0] + '/web/ &', shell=True)
-        # subprocess.run('php -S localhost:'+ config['Common']['httpPort'] +' -t ' + sys.path[0] + '/web/ &> /tmp/sysenv_php.log', shell=True)
-        # os.execl('/usr/bin/php','php','-S', 'localhost:'+ config['Common']['httpPort'], '-t', sys.path[0] + '/web/')
-ThreadPHP = phpProcess()
-ThreadPHP.setDaemon(True)
-ThreadPHP.start()
+if config['Common']['usePHPWebServer'] == 1:
+    class phpProcess(threading.Thread):
+        def __init__(self):
+            threading.Thread.__init__(self)
+            pass
+        def run(self):
+            subprocess.run('php -S localhost:'+ config['Common']['httpPort'] +' -t ' + sys.path[0] + '/web/ &', shell=True)
+            # subprocess.run('php -S localhost:'+ config['Common']['httpPort'] +' -t ' + sys.path[0] + '/web/ &> /tmp/sysenv_php.log', shell=True)
+            # os.execl('/usr/bin/php','php','-S', 'localhost:'+ config['Common']['httpPort'], '-t', sys.path[0] + '/web/')
+    ThreadPHP = phpProcess()
+    ThreadPHP.setDaemon(True)
+    ThreadPHP.start()
 
 
 ### 传感器数据获取线程
@@ -93,10 +93,12 @@ ThreadPushD.setDaemon(True)
 ThreadPushD.start()
 
 ### 状态检测线程
+# for i in range(1, 7):
+ThreadStatusCheck = {}
 for i in range(1, 7):
-    ThreadStatusCheck = ctl.sensor(i)
-    ThreadStatusCheck.setDaemon(True)
-    ThreadStatusCheck.start()
+    ThreadStatusCheck[i] = ctl.sensorWatcher(i)
+    ThreadStatusCheck[i].setDaemon(True)
+    ThreadStatusCheck[i].start()
 
     # print(i)
 # ThreadPullD = ctl.hatCtl.pullHatData()
@@ -105,6 +107,15 @@ for i in range(1, 7):
 
 # ThreadPullD.join()
 
- #绑定要监听的端口
+time.sleep(5)
+# print(ctl.getGlobalVar('flag'))
+
+#绑定要监听的端口
 # ThreadPullD.join()
-ThreadStatusCheck.join()
+ThreadPullD.join()
+
+# try:
+#     pass
+# except:
+#     if config['Common']['usePHPWebServer'] == 1:
+#         subprocess.run('pkill -9 php', shell=True)
