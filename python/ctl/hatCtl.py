@@ -39,6 +39,7 @@ class pullHatData(threading.Thread):
                         # print(buf)
                         readData = buf.decode('utf-8')
                         sensorData = json.loads(readData)
+                        LOG.info(sensorData)
                         ctl.setGlobalVar('sensorData', sensorData)
                         # print(readData)
                         

@@ -110,22 +110,22 @@ class sensorWatcher(threading.Thread):
         if self._lastStatus == self._status:
             if self._status == -1:
                 self._errCount = self._errCount + 1
-                print('status:' + self._name + " error " + str(self._errCount))
+                # print('status:' + self._name + " error " + str(self._errCount))
                 if self._errCount >= 10:
                     print('status:' + self._name + " is error or not installed")
                     self._topic = '出错'
                     self._topicStatus = '传感器出错或未安装，请检查'
                     if self._lastArarmTime1 == 0:
-                        self._sendEmail()
+                        # self._sendEmail()
                         self._lastArarmTime1 = time.time()
                     elif time.time() - self._lastArarmTime1 < int(ctl.getGlobalVar('config')['Common']['alarmInterval']):
                         self._lastArarmTime1 = time.time()
                     else:
-                        self._sendEmail()
+                        # self._sendEmail()
                         self._lastArarmTime1 = time.time()
         elif self._lastStatus != self._status:
+            self._errCount = 0
             if self._status == -1:
-                self._errCount = 0
                 self._lastStatus = self._status
             elif self._status == 0:
                 if self._lastStatus == -1:

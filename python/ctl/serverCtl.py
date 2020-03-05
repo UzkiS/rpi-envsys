@@ -7,6 +7,7 @@ import traceback
 import ctl
 import json
 import sqlite3
+import urllib3
 ##### 前后端数据传输线程
 class pushSensorData(threading.Thread):
     def __init__(self, host = '127.0.0.1', port = 16868):
@@ -92,6 +93,16 @@ class pushSensorData(threading.Thread):
                     #     conn.send(json.dumps(ctl.getGlobalVar('sensorData')).encode('utf-8'))
                     # print('recive:' + data)
                     conn.send(json.dumps(ctl.getGlobalVar('flag')).encode('utf-8'))
+                    conn.close()
+                    break
+                elif data == 'getWeather':
+                    http = urllib3.PoolManager()
+                    r = http.request('GET', 'http://ip.taobao.com/service/getIpInfo.php?ip=myip')
+                    ipInfo = json.loads(r.data.decode('utf-8'))
+                    ip = ipInfo['data']['ip']
+                    r = http.request('GET', 'https://www.tianqiapi.com/api/?appid=' + ctl.getGlobalVar('config')['Weather']['appid'] + '&appsecret=' + ctl.getGlobalVar('config')['Weather']['appsecret'] + '&version=v6&ip='+ip)
+                    weater = json.loads(r.data.decode('utf-8'))
+                    conn.send(json.dumps(weater).encode('utf-8'))
                     conn.close()
                     break
                 else:
