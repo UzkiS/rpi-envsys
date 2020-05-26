@@ -97,9 +97,9 @@ class pushSensorData(threading.Thread):
                     break
                 elif data == 'getWeather':
                     http = urllib3.PoolManager()
-                    r = http.request('GET', 'http://ip.taobao.com/service/getIpInfo.php?ip=myip')
+                    r = http.request('GET', 'http://ip-api.com/json/')
                     ipInfo = json.loads(r.data.decode('utf-8'))
-                    ip = ipInfo['data']['ip']
+                    ip = ipInfo['query']
                     r = http.request('GET', 'https://www.tianqiapi.com/api/?appid=' + ctl.getGlobalVar('config')['Weather']['appid'] + '&appsecret=' + ctl.getGlobalVar('config')['Weather']['appsecret'] + '&version=v6&ip='+ip)
                     weater = json.loads(r.data.decode('utf-8'))
                     conn.send(json.dumps(weater).encode('utf-8'))

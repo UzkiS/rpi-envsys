@@ -13,12 +13,12 @@ class pullHatData(threading.Thread):
     def __init__(self):
         threading.Thread.__init__(self)
         pass
-    def pullData(self, dev = '/dev/ttyAMA0', baudRate = 9600):
+    def pullData(self, dev = '/dev/ttyAMA0', baudRate = 9600, mode = 0):
 
         while True:
             # ctl.setGlobalVar('sensorData', '')
-            self._msg = 'Pull data thread started.'
-            print(self._msg)
+            self._msg = 'Pull data thread try to start.'
+            # print(self._msg)
             # ctl.setGlobalVar('flagPushD', True)
             self._errCount=0
             try:
@@ -50,7 +50,10 @@ class pullHatData(threading.Thread):
                         time.sleep(1)
                         if self._errCount > 10:
                             raise Exception("Read hat data error, may be hat pull out.")
-
+            except OSError:
+                continue
+            except json.decoder.JSONDecodeError:
+                continue
             except:
                 exc_type, exc_value, exc_traceback = sys.exc_info()
                 print(traceback.format_exception(exc_type, exc_value, exc_traceback))
@@ -65,4 +68,4 @@ class pullHatData(threading.Thread):
 
         
     def run(self):
-        self.pullData(ctl.getGlobalVar('config')['Hat']['serialDeviceName'], ctl.getGlobalVar('config')['Hat']['baudRate'])
+        self.pullData(ctl.getGlobalVar('config')['Hat']['serialDeviceName'], ctl.getGlobalVar('config')['Hat']['baudRate'], ctl.getGlobalVar('config')['Hat']['mode'])

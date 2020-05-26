@@ -7,7 +7,7 @@ function get_client_ip()
     foreach ($data as $dataItem) {
         $ipAddr = $dataItem['addr_info'][0]['local'];
         $ipHead = substr($ipAddr, 0, 3);
-        if ($ipHead != '169') {
+        if ($ipHead != '169' & $ipHead != '127') {
             $ip[$count] = $ipAddr;
             $count++;
         }

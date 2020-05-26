@@ -1,3 +1,4 @@
+import RPi.GPIO as GPIO
 import threading
 import logging as LOG
 import ctl
@@ -24,12 +25,14 @@ class sensorWatcher(threading.Thread):
         self._lastArarmTime3 = 0
         self._lastArarmTime4 = 0
         self._errCount = 0
-        self._conn = sqlite3.connect(sys.path[0] + '/' + ctl.getGlobalVar('config')['Common']['DB']).cursor()
         self._name, self._cname, self.unit, self._lowVar, self._highVar, self._mtd, self._alarmMode, self._useWatcher, self._useEmail, self._useBuz, self._recVal = self._getlVar()
+        self._conn.close()
+        self._GPIO = int(ctl.getGlobalVar('config')['CTL_GPIO'][self._name])
         pass
 
     def _getlVar(self):
         # ctl.getGlobalVar('sensorData')['temperature']
+        self._conn = sqlite3.connect(sys.path[0] + '/' + ctl.getGlobalVar('config')['Common']['DB']).cursor()
         self._conn.execute("SELECT name, cname, unit, lowVar, highVar, method, alarmMode, useWatcher, useEmail, useBuz, recVal from sensor WHERE uid = ?", str(self._uid))
         for row in self._conn:
             return row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10]
@@ -115,6 +118,7 @@ class sensorWatcher(threading.Thread):
                     print('status:' + self._name + " is error or not installed")
                     self._topic = '出错'
                     self._topicStatus = '传感器出错或未安装，请检查'
+                    self._GPIO_CTL()
                     if self._lastArarmTime1 == 0:
                         # self._sendEmail()
                         self._lastArarmTime1 = time.time()
@@ -136,6 +140,7 @@ class sensorWatcher(threading.Thread):
                             print('status:' + self._name + " is safe")
                             self._topic = '恢复安全'
                             self._topicStatus = '已经恢复安全状态'
+                            self._GPIO_CTL()
                             if self._lastArarmTime2 == 0:
                                 self._sendEmail()
                                 self._lastArarmTime2 = time.time()
@@ -153,6 +158,7 @@ class sensorWatcher(threading.Thread):
                                 print('status:' + self._name + " is safe")
                                 self._topic = '恢复安全'
                                 self._topicStatus = '已经恢复安全状态'
+                                self._GPIO_CTL()
                                 if self._lastArarmTime2 == 0:
                                     self._sendEmail()
                                     self._lastArarmTime2 = time.time()
@@ -188,6 +194,7 @@ class sensorWatcher(threading.Thread):
                     print('status:' + self._name + " is warning")
                     self._topic = '预警'
                     self._topicStatus = '达到警戒值，请注意'
+                    self._GPIO_CTL()
                     if self._lastArarmTime3 == 0:
                         self._sendEmail()
                         self._lastArarmTime3 = time.time()
@@ -201,6 +208,7 @@ class sensorWatcher(threading.Thread):
                         print('status:' + self._name + " is warning")
                         self._topic = '恢复预警状态'
                         self._topicStatus = '恢复到预警范围，请注意'
+                        self._GPIO_CTL()
                         if self._lastArarmTime3 == 0:
                             self._sendEmail()
                             self._lastArarmTime3 = time.time()
@@ -214,6 +222,7 @@ class sensorWatcher(threading.Thread):
                 print('status:' + self._name + " is danger")
                 self._topic = '警告'
                 self._topicStatus = '超过安全范围'
+                self._GPIO_CTL()
                 if self._lastArarmTime4 == 0:
                     self._sendEmail()
                     self._lastArarmTime4 = time.time()
@@ -223,6 +232,21 @@ class sensorWatcher(threading.Thread):
                     self._sendEmail()
                     self._lastArarmTime4 = time.time()
                 self._lastStatus = self._status
+
+    def _GPIO_CTL(self):
+        if self._GPIO != -1:
+            if self._status == -1 and self._errCount >= 5:
+                GPIO.output(self._GPIO, GPIO.LOW)
+                print(self._cname + " set GPIO.LOW")
+            elif self._status == 0:
+                GPIO.output(self._GPIO, GPIO.LOW)
+                print(self._cname + " set GPIO.LOW")
+            elif self._status == 1:
+                GPIO.output(self._GPIO, GPIO.HIGH)
+                print(self._cname + " set GPIO.HIGH")
+            elif self._status == 2:
+                GPIO.output(self._GPIO, GPIO.HIGH)
+                print(self._cname + " set GPIO.HIGH")
 
     def _sendEmail(self):
         if self._useEmail == 1:
@@ -242,7 +266,7 @@ class sensorWatcher(threading.Thread):
             msg['From'] = _format_addr('Raspberry Pi <%s>' % fromAddr)
             msg['To'] = _format_addr(toAddr + ' <%s>' % toAddr)
             msg['Subject'] = Header(msgTopic, 'utf-8').encode()
-
+            
             try:
                 server = smtplib.SMTP(smtpServer, smtpPort)
                 # server.set_debuglevel(1)
@@ -269,6 +293,8 @@ class sensorWatcher(threading.Thread):
         ### 0:NORMAL
         ### 1:BUZ
         #'flag' + name.capitalize():-1 gray 0:green 1:yellow 2:red
+        self._name, self._cname, self.unit, self._lowVar, self._highVar, self._mtd, self._alarmMode, self._useWatcher, self._useEmail, self._useBuz, self._recVal = self._getlVar()
+        self._conn.close()
         self._msg = 'Sensor [' + self._name + '] watch thread started.'
         LOG.info(self._msg)
         print(self._msg)

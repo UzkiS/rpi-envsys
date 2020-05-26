@@ -96,8 +96,8 @@
                 <!-- <div class="col-sm-1 d-md-block"></div> -->
             </div>
             <div class="d-flex justify-content-center">
-                <div class="row mt-3 col-11">
-                    <div v-for="(data,key) in item" class="col-sm-6 col-lg-4 col-xl-12">
+                <div class="row mt-3 col-11 p-0">
+                    <div v-for="(data,key) in item" class="col-sm-6 col-lg-4 col-xl-12 p-0">
                         <!-- <div class="mt-4 ml-1 mr-1 p-3 rounded-lg border border-white" tabindex="0" data-toggle="popover" data-placement="top" data-trigger="focus" title="Dismissible popover" v-bind:data-content="data.popover">  -->
                         <div class="mt-4 ml-1 mr-1 p-3 rounded-lg border"
                             v-bind:class="{ 'border-dark': data.status == -1, 'border-white': data.status == 0 || data.status == -2, 'border-warning': data.status == 1, 'border-danger': data.status == 2 }"
@@ -134,43 +134,79 @@
         <!-- 情景设置 -->
         <section id="pageSenceCtl">
             <div class="d-flex justify-content-center">
-                <div class="row mt-5 col-11">
-                    <div v-for="(data,key) in item" class="col-xl-12">
+                <div class="row col-12 p-0">
+                    <div v-for="(data,key) in item" class="col-xl-12 p-0">
                         <div class="mt-3 ml-1 mr-1 p-3 rounded-lg border border-white">
-                            <h3>{{ data.name }}</h3>
-                            <p>{{ data.data }}</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-        <!-- 系统设置 -->
-        <section id="pageSysSetting">
-            <div class="d-flex justify-content-center">
-                <div class="row mt-5 col-11">
-                    <div v-for="(data,key) in item" class="col-xl-12">
-                        <div class="mt-3 ml-1 mr-1 p-3 rounded-lg border border-white" data-toggle="collapse"
-                            data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
-                            <h3>{{ data.name }}</h3>
-                            <p>{{ data.data }}</p>
-                            <div class="collapse" id="collapseExample">
-                                <div class="">
-                                    Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry
-                                    richardson ad squid. Nihil anim keffiyeh helvetica, craft beer labore wes anderson
-                                    cred nesciunt sapiente ea proident.
+                            <h3>{{ data.cname }}传感器设置</h3>
+
+                            <form class="">
+                                <div class="form-group">
+                                    <div class="m-3">
+                                        <p class="d-inline">启用状态监控</p>
+                                        <div class="custom-control custom-switch d-inline">
+                                            <input type="checkbox" class="custom-control-input"
+                                                :id="`useWatcher${data.uid}`" v-model="data.useWatcher">
+                                            <label class="custom-control-label" :for="`useWatcher${data.uid}`"></label>
+                                            <small class="text-muted">
+                                                允许程序监控并判断传感器状态
+                                            </small>
+                                        </div>
+                                    </div>
+                                    <div class="m-3">
+                                        <p class="d-inline">使用邮件通知</p>
+                                        <div class="custom-control custom-switch d-inline">
+                                            <input type="checkbox" class="custom-control-input"
+                                                :id="`useEmail${data.uid}`" v-model="data.useEmail">
+                                            <label class="custom-control-label" :for="`useEmail${data.uid}`"></label>
+                                            <small class="text-muted">
+                                                允许状态异常时发送邮件
+                                            </small>
+                                        </div>
+                                    </div>
+                                    <div class="m-3 form-inline">
+                                        <label :for="`lowVal${data.uid}`">低比值</label>
+                                        <input type="text" :id="`lowVal${data.uid}`" class="form-control mx-sm-3"
+                                            aria-describedby="lowValHelpInline" v-model="data.lowVar">
+                                        <small class="text-muted">
+                                            高低比值用于判断传感器是否正常
+                                        </small>
+                                    </div>
+                                    <div class="m-3 form-inline">
+                                        <label :for="`highVal${data.uid}`">高比值</label>
+                                        <input type="text" :id="`highVal${data.uid}`" class="form-control mx-sm-3"
+                                            aria-describedby="highValHelpInline" v-model="data.highVar">
+                                        <small class="text-muted">
+                                            高低比值用于判断传感器是否正常
+                                        </small>
+                                    </div>
+                                    <div class="m-3 form-inline">
+                                        <label :for="`recVal${data.uid}`">恢复值</label>
+                                        <input type="text" :id="`recVal${data.uid}`" class="form-control mx-sm-3"
+                                            aria-describedby="recValHelpInline" maxlength="2" v-model="data.recVal">
+                                        <small class="text-muted">
+                                            判断状态是否恢复的过渡值
+                                        </small>
+                                    </div>
+
+                                    <div class="col-md-12 col-lg-12 d-flex justify-content-end d-block">
+                                        <button type="button" v-on:click="save(data.uid)"
+                                            class="btn btn-success m-1">保存</button>
+                                    </div>
                                 </div>
-                            </div>
+                            </form>
                         </div>
                     </div>
+
                 </div>
             </div>
         </section>
 
+
         <!-- 设备管理 -->
         <section id="pageDeviceCtl">
             <div class="d-flex justify-content-center">
-                <div class="row mt-5 col-11">
-                    <div class="col-xl-12">
+                <div class="row col-12 p-0">
+                    <div class="col-xl-12 p-0">
                         <div
                             class="mt-3 ml-1 mr-1 p-3 rounded-lg border border-white bg-dark d-flex justify-content-between">
                             <div class="row w-100 m-auto">
@@ -192,10 +228,206 @@
                             </div>
                         </div>
                     </div>
-                    <div v-for="(data,key) in item" class="col-xl-12">
+                    <div v-for="(data,key) in item" class="col-xl-12 p-0">
                         <div class="mt-3 ml-1 mr-1 p-3 rounded-lg border border-white d-flex justify-content-between">
                             <h3 class="mb-auto">{{ data.name }}</h3>
                             <p class="mt-auto mb-auto">{{ data.data }}</p>
+                        </div>
+                    </div>
+                    <div class="col-xl-12 p-0">
+                        <div class="mt-3 ml-1 mr-1 p-3 rounded-lg border border-white ">
+                            <h3 class="mb-auto">远程唤醒</h3>
+                            <div v-for="(data,key) in wol" class="mt-3 mb-auto rounded-lg border border-light">
+                                <div class="m-3">
+                                    <h4>{{ data.name }}</h4>
+                                    <small class="d-inline">MAC:{{ data.mac }}</small>
+                                    <div class="col-md-12 col-lg-12 d-flex justify-content-end d-block">
+                                        <button type="button" v-on:click="bootWol(data.mac)"
+                                            class="btn btn-success m-1">唤醒</button>
+                                        <button type="button" v-on:click="delWol(data.uid)"
+                                            class="btn btn-danger m-1">删除</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="mt-3 mb-auto rounded-lg border border-light">
+
+                                <div class="mt-3 ml-1 mr-1 p-3">
+                                    <div class="d-flex justify-content-between d-block">
+                                        <div class="mt-auto mb-auto">
+                                            <h5>添加唤醒设备</h3>
+                                        </div>
+                                        <nav class="navbar navbar-dark">
+                                            <button class="navbar-toggler" type="button" data-toggle="collapse"
+                                                data-target="#addWolCollaspse" aria-expanded="false"
+                                                aria-controls="addWolCollaspse">
+                                                <span class="navbar-toggler-icon"></span>
+                                            </button>
+                                        </nav>
+                                    </div>
+
+
+
+                                    <div class="collapse" id="addWolCollaspse">
+                                        <form class="m-2">
+                                            <div class="form-group">
+                                                <label for="name">设备名称</label>
+                                                <input type="text" class="form-control" id="name" v-model="wname"
+                                                    maxlength="10">
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="mac">MAC地址</label>
+                                                <input type="text" class="form-control" id="mac"
+                                                    aria-describedby="macHelp" v-model="wmac" maxlength="12">
+                                                <small id="macHelp" class="form-text text-muted">不含符号的MAC地址</small>
+                                            </div>
+                                            <button class="btn btn-primary" v-on:click="addWol">添加</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 系统设置 -->
+        <section id="pageSysSetting">
+            <div class="d-flex justify-content-center">
+                <div class="row col-12 p-0">
+                    <div class="col-xl-12 p-0">
+                        <div class="mt-3 ml-1 mr-1 p-3 rounded-lg border border-white">
+                            <h3>通用设置</h3>
+                            <form class="m-3">
+                                <div class="form-group row">
+                                    <label for="alarmInterval" class="col-sm-2 col-form-label">邮件发送间隔（秒）</label>
+                                    <div class="col-sm-10">
+                                        <input type="text" class="form-control" id="alarmInterval"
+                                            v-model="item.Common.alarmInterval">
+                                    </div>
+                                </div>
+                            </form>
+                            <h3>邮箱设置</h3>
+                            <form class="m-3">
+
+                                <div class="form-group row">
+                                    <label for="smtpServer" class="col-sm-2 col-form-label">SMTP服务器</label>
+                                    <div class="col-sm-10">
+                                        <input type="text" class="form-control" id="smtpServer"
+                                            v-model="item.Mail.smtpServer">
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label for="smtpPort" class="col-sm-2 col-form-label">SMTP端口</label>
+                                    <div class="col-sm-10" maxlength="5">
+                                        <input type="text" class="form-control" id="smtpPort"
+                                            v-model="item.Mail.smtpPort">
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label for="smtpUser" class="col-sm-2 col-form-label">SMTP用户</label>
+                                    <div class="col-sm-10" maxlength="5">
+                                        <input type="text" class="form-control" id="smtpUser"
+                                            v-model="item.Mail.smtpUser">
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label for="smtpPassword" class="col-sm-2 col-form-label">SMTP密码</label>
+                                    <div class="col-sm-10">
+                                        <input type="password" class="form-control" id="smtpPassword"
+                                            v-model="item.Mail.smtpPassword">
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label for="mailReceiver" class="col-sm-2 col-form-label">接收邮件邮箱</label>
+                                    <div class="col-sm-10">
+                                        <input type="email" class="form-control" id="mailReceiver"
+                                            v-model="item.Mail.mailReceiver">
+                                    </div>
+                                </div>
+                            </form>
+                            <h3>天气API设置</h3>
+                            <form class="m-3">
+                                <div class="form-group row">
+                                    <label for="appid" class="col-sm-2 col-form-label">APPID</label>
+                                    <div class="col-sm-10">
+                                        <input type="text" class="form-control" id="appid" v-model="item.Weather.appid">
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label for="appsecret" class="col-sm-2 col-form-label">APPSECRET</label>
+                                    <div class="col-sm-10">
+                                        <input type="password" class="form-control" id="appsecret"
+                                            v-model="item.Weather.appsecret">
+                                    </div>
+                                </div>
+                            </form>
+                            <h3>显示器设置</h3>
+                            <form class="m-3">
+                                <div class="form-group row">
+                                    <label for="lcdSleepTime" class="col-sm-2 col-form-label">显示器休眠时间</label>
+                                    <div class="col-sm-10">
+                                        <input type="text" class="form-control" id="lcdSleepTime" v-model="item.LCD.lcdSleepTime">
+                                    </div>
+                                </div>
+                            </form>
+                            <h3>设备控制GPIO设置</h3>
+                            <form class="m-3">
+                                <div class="form-group row">
+                                    <label for="temperature" class="col-sm-2 col-form-label">温度 IO</label>
+                                    <div class="col-sm-10">
+                                        <input type="text" class="form-control" id="temperature"
+                                            v-model="item.CTL_GPIO.temperature">
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label for="humditiy" class="col-sm-2 col-form-label">湿度 IO</label>
+                                    <div class="col-sm-10">
+                                        <input type="text" class="form-control" id="humditiy"
+                                            v-model="item.CTL_GPIO.humditiy">
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label for="eco2" class="col-sm-2 col-form-label">eCO2 IO</label>
+                                    <div class="col-sm-10">
+                                        <input type="text" class="form-control" id="eco2" v-model="item.CTL_GPIO.eco2">
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label for="tvoc" class="col-sm-2 col-form-label">TVOC IO</label>
+                                    <div class="col-sm-10">
+                                        <input type="text" class="form-control" id="tvoc" v-model="item.CTL_GPIO.tvoc">
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label for="formaldehyde" class="col-sm-2 col-form-label">甲醛传感器 IO</label>
+                                    <div class="col-sm-10">
+                                        <input type="text" class="form-control" id="formaldehyde"
+                                            v-model="item.CTL_GPIO.formaldehyde">
+                                    </div>
+                                </div>
+                            </form>
+                            <h3>传感器集成板设置</h3>
+                            <form class="m-3">
+                                <div class="form-group row">
+                                    <label for="serialDeviceName" class="col-sm-2 col-form-label">Serial设备</label>
+                                    <div class="col-sm-10">
+                                        <input type="text" class="form-control" id="serialDeviceName"
+                                            v-model="item.Hat.serialDeviceName">
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label for="baudRate" class="col-sm-2 col-form-label">波特率</label>
+                                    <div class="col-sm-10">
+                                        <input type="text" class="form-control" id="baudRate"
+                                            v-model="item.Hat.baudRate">
+                                    </div>
+                                </div>
+                            </form>
+                            <div class="col-md-12 col-lg-12 d-flex justify-content-end d-block">
+                                <button type="button" v-on:click="save" class="btn btn-success m-1">保存</button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -242,61 +474,6 @@
                             air_level: "None",
                             air_tips: "空气很好，可以外出活动，呼吸新鲜空气，拥抱大自然！"
                         },
-                        // temp: {
-                        //     id: 1,
-                        //     targetId: 'targetTEMP',
-                        //     targetIdSharp: '#targetTEMP',
-                        //     name: '环境温度',
-                        //     data: 'NULL',
-                        //     unit: '℃',
-                        //     popover: '1'
-                        // },
-                        // humi: {
-                        //     id: 1,
-                        //     targetId: 'targetHUMI',
-                        //     targetIdSharp: '#targetHUMI',
-                        //     name: '环境湿度',
-                        //     data: 'NULL',
-                        //     unit: '%',
-                        //     popover: '2'
-                        // },
-                        // hcho: {
-                        //     id: 1,
-                        //     targetId: 'targetHCHO',
-                        //     targetIdSharp: '#targetHCHO',
-                        //     name: '甲醛浓度',
-                        //     data: 'NULL',
-                        //     unit: 'PPb',
-                        //     popover: '3'
-                        // },
-                        // eco2: {
-                        //     id: 1,
-                        //     targetId: 'targetECO2',
-                        //     targetIdSharp: '#targetECO2',
-                        //     name: 'eCO2浓度',
-                        //     data: 'NULL',
-                        //     unit: 'PPM',
-                        //     popover: '4'
-                        // },
-                        // tvoc: {
-                        //     id: 1,
-                        //     targetId: 'targetTVOC',
-                        //     targetIdSharp: '#targetECO2',
-                        //     name: 'eCO2浓度',
-                        //     data: 'NULL',
-                        //     unit: 'PPM',
-                        //     popover: '4'
-                        // },
-                        // light: {
-                        //     id: 1,
-                        //     targetId: 'targetECO2',
-                        //     targetIdSharp: '#targetECO2',
-                        //     name: 'eCO2浓度',
-                        //     data: 'NULL',
-                        //     unit: 'PPM',
-                        //     popover: '4'
-                        // }
-                        // },
                         time: '00:00:00',
                         date: 'NULL',
                         week: 'NULL',
@@ -332,13 +509,8 @@
                                         pageOverviewData.$data['item'][item]['data'] = '后端未启动';
                                     }
                                 } else {
-                                    // for (item in pageOverviewData.$data.item) {
-                                    //     pageOverviewData.$data['item'][item]['data'] = response.data[item];
-                                    // }
                                     this.item = []
-
                                     for (var item in response.data) {
-
                                         var tId = 'target' + item;
                                         var tIdS = '#' + tId;
                                         this.item.push({
@@ -350,9 +522,7 @@
                                             'comment': response.data[item]['comment'],
                                             'targetId': tId,
                                             'targetIdSharp': tIdS
-
                                         })
-
                                         // console.log(item);
                                     }
                                 }
@@ -409,6 +579,157 @@
                     setInterval(this.getWeather, 3600000);
                 }
             });
+            var pageSenceCtl = new Vue({
+                el: '#pageSenceCtl',
+                data: function () {
+                    return {
+                        item: [],
+                        test: ""
+                    }
+                },
+                methods: {
+                    list: function () {
+                        axios
+                            .get('/control/sence.php', {
+                                params: {
+                                    mode: 'list'
+                                }
+                            })
+                            .then(response => {
+                                this.item = []
+                                // var len = response.data.length;
+                                for (var item in response.data) {
+                                    // console.log(response.data[item].uid)
+                                    if (response.data[item]['useEmail'] == 1) {
+                                        response.data[item]['useEmail'] = true;
+                                    } else {
+                                        response.data[item]['useEmail'] = false;
+                                    }
+                                    if (response.data[item]['useWatcher'] == 1) {
+                                        response.data[item]['useWatcher'] = true;
+                                    } else {
+                                        response.data[item]['useWatcher'] = false;
+                                    }
+                                    this.item.push(response.data[item])
+                                }
+
+                            })
+                            .catch(function (error) { // 请求失败处理
+                                console.log(error);
+                            });
+                    },
+                    save: function (uid) {
+
+                        if (this.item[uid-1]['useEmail'] == true) {
+                            this.item[uid-1]['useEmail'] = 1;
+                        } else {
+                            this.item[uid-1]['useEmail'] = 0;
+                        }
+                        if (this.item[uid-1]['useWatcher'] == true) {
+                            this.item[uid-1]['useWatcher'] = 1;
+                        } else {
+                            this.item[uid-1]['useWatcher'] = 0;
+                        }
+
+                        // console.log(JSON.stringify(this.item[uid-1])) ;
+                        axios
+                            .get('/control/sence.php', {
+                                params: {
+                                    mode: 'save',
+                                    data: JSON.stringify(this.item[uid-1])
+                                }
+                            })
+                            .catch(function (error) { // 请求失败处理
+                                console.log(error);
+                            });
+                    }
+                },
+                mounted: function () {
+                    this.list();
+                }
+            });
+            var pageSysSetting = new Vue({
+                el: '#pageSysSetting',
+                data: function () {
+                    return {
+                        item: {
+                            "Common": {
+                                "DB": "",
+                                "sendSerPort": "",
+                                "httpPort": "",
+                                "host": "",
+                                "alarmInterval": "",
+                                "usePHPWebServer": ""
+                            },
+                            "Mail": {
+                                "smtpServer": "",
+                                "smtpPort": "",
+                                "smtpUser": "",
+                                "smtpPassword": "",
+                                "mailReceiver": ""
+                            },
+                            "Weather": {
+                                "appid": "",
+                                "appsecret": ""
+                            },
+                            "LCD": {
+                                "lcdSleepTime": ""
+                            },
+                            "GPIO": {
+                                "LCD": "",
+                                "PIR": "",
+                                "LDR": "",
+                                "BUZ": ""
+                            },
+                            "CTL_GPIO": {
+                                "temperature": "",
+                                "humditiy": "",
+                                "eco2": "",
+                                "tvoc": "",
+                                "formaldehyde": "",
+                                "light": ""
+                            },
+                            "Hat": {
+                                "serialDeviceName": "",
+                                "mode": "",
+                                "baudRate": ""
+                            }
+                        }
+                    }
+                },
+                methods: {
+                    list: function () {
+                        axios
+                            .get('/control/confCtl.php', {
+                                params: {
+                                    mode: 'list'
+                                }
+                            })
+                            .then(response => {
+                                this.item = response.data
+                            })
+                            .catch(function (error) { // 请求失败处理
+                                console.log(error);
+                            });
+                    },
+                    save: function () {
+                        axios
+                            .get('/control/confCtl.php', {
+                                params: {
+                                    mode: 'save',
+                                    conf: JSON.stringify(this.item)
+                                }
+                            })
+                            .catch(function (error) { // 请求失败处理
+                                console.log(error);
+                            });
+                    }
+                },
+                mounted: function () {
+                    this.list();
+                }
+            });
+
             var deviceData = new Vue({
                 el: '#pageDeviceCtl',
                 data: function () {
@@ -433,7 +754,10 @@
                                 unit: '%'
                             }
                         },
-                        ip: []
+                        ip: [],
+                        wol: [],
+                        wname: "",
+                        wmac: ""
                     }
                 },
                 methods: {
@@ -504,11 +828,71 @@
                             .catch(function (error) { // 请求失败处理
                                 console.log(error);
                             });
+                    },
+                    bootWol: function (wmac) {
+                        console.log(wmac);
+                        axios
+                            .get('/control/wol.php', {
+                                params: {
+                                    mode: 'boot',
+                                    mac: wmac
+                                }
+                            })
+                            .catch(function (error) { // 请求失败处理
+                                console.log(error);
+                            });
+                    },
+                    listWol: function () {
+                        axios
+                            .get('/control/wol.php', {
+                                params: {
+                                    mode: 'list'
+                                }
+                            })
+                            .then(response => {
+                                this.wol = []
+                                // var len = response.data.length;
+                                for (var item in response.data) {
+                                    // console.log(response.data[item].uid)
+                                    this.wol.push(response.data[item])
+                                }
+
+                            })
+                            .catch(function (error) { // 请求失败处理
+                                console.log(error);
+                            });
+                    },
+                    addWol: function () {
+                        // 可在此处添加表单验证
+                        axios
+                            .get('/control/wol.php', {
+                                params: {
+                                    mode: 'add',
+                                    name: this.wname,
+                                    mac: encodeURI(this.wmac)
+                                }
+                            })
+                            .catch(function (error) { // 请求失败处理
+                                console.log(error);
+                            });
+                    },
+                    delWol: function (id) {
+                        axios
+                            .get('/control/wol.php', {
+                                params: {
+                                    mode: 'del',
+                                    uid: id
+                                }
+                            })
+                            .catch(function (error) { // 请求失败处理
+                                console.log(error);
+                            });
                     }
                 },
                 mounted: function () {
                     setInterval(this.getData, 1000);
                     setInterval(this.getIP, 1000);
+                    setInterval(this.listWol, 1000);
                 }
             });
 

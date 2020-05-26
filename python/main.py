@@ -1,4 +1,4 @@
-# import RPi.GPIO as GPIO
+import RPi.GPIO as GPIO
 import time,os
 import sys
 import socket
@@ -48,24 +48,30 @@ config=ctl.getGlobalVar('config')
 # print(ctl.getGlobalVar('config'))
 # config.write()
 ### 预设GPIO状态
-# outputHighList = [config['GPIO']['LCD']]
-# outputLowList = [config['GPIO']['BUZ']]
-# inputList = [config['GPIO']['PIR'], config['GPIO']['LDR']]
+GPIO.setwarnings(False)
+GPIO.cleanup()
+GPIO.setmode(GPIO.BCM)
 
-# GPIO.setup(outputHighList, GPIO.OUT, initial=GPIO.HIGH)
-# GPIO.setup(chanOutLowList, GPIO.OUT, initial=GPIO.LOW)
-# GPIO.setup(inputList, GPIO.IN)
+outputHighList = [int(config['GPIO']['LCD'])]
+outputLowList = [int(config['GPIO']['BUZ'])]
+# if int(config['GPIO']['BUZ']
+for x in config['CTL_GPIO']:
+    if int(config['CTL_GPIO'][x]) != -1:
+        outputLowList.append(int(config['CTL_GPIO'][x]))
+inputList = [int(config['GPIO']['PIR']), int(config['GPIO']['LDR'])]
 
+GPIO.setup(outputHighList, GPIO.OUT, initial=GPIO.HIGH)
+GPIO.setup(outputLowList, GPIO.OUT, initial=GPIO.LOW)
+GPIO.setup(inputList, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
 
 # ThreadPullSD = pullSensorData()
 # ThreadPSD.setDaemon(True)
 # ThreadPSD.start()
 
-# ThreadCL = ctlLCD(config['GPIO']['LCD'])
-# ThreadCL.setDaemon(True)
-# ThreadCL.start()
+ThreadCL = ctl.lcd(int(config['GPIO']['PIR']), int(config['GPIO']['LCD']))
+ThreadCL.setDaemon(True)
+ThreadCL.start()
 
-# ThreadCL.join()
 if config['Common']['usePHPWebServer'] == 1:
     class phpProcess(threading.Thread):
         def __init__(self):

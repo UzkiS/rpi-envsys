@@ -8,4 +8,6 @@ from . import globalVarCtl
 from .globalVarCtl import *
 from . import statusChk
 from .statusChk import *
+from . import lcdCtl
+from .lcdCtl import *
 
