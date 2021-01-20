@@ -8,11 +8,11 @@
 
 ### 项目截图
 
-![1](https://github.com/LemoFire/rpi-envsys/raw/main/doc/1.png)
+![1](https://github.com/LemoFire/rpi-envsys/raw/master/doc/1.png)
 
-![2](https://github.com/LemoFire/rpi-envsys/raw/main/doc/2.png)
+![2](https://github.com/LemoFire/rpi-envsys/raw/master/doc/2.png)
 
-![3](https://github.com/LemoFire/rpi-envsys/raw/main/doc/3.png)
+![3](https://github.com/LemoFire/rpi-envsys/raw/master/doc/3.png)
 
 ### 文件夹及基本说明
 
